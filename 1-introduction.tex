@@ -1,0 +1,112 @@
+\section{Introduction}
+
+Recall from \textit{IA Numbers and Sets} that a set \(X\) is \term{countable} if \(X = \emptyset\), or there is some surjection \(\functiondomain{f}{\NN}{X}\).
+
+We recall the following facts about countable sets:
+\begin{itemize}
+    \item Countable union of countable sets is countable. (We will refer to this as \term{zig-zagging}.)
+    \item Diagonal argument will show sets that are uncountable.
+    \item If \(X\) and \(Y\) are countable, then \(X \times Y\) are countable.
+    \item If \(X\) is countable, then the set of \textbf{finite} subsets of \(X\) is countable.
+    \item If \(X\) is infinite, then the \term{power set} of \(X\), denoted \(\powerset\pqty{X}\), is uncountable.
+\end{itemize}
+
+Now we introduce some definitions.
+
+\begin{definition}[Alphabet]
+    An \term{alphabet} \(\Sigma\) is a finite, non-empty set of symbols.
+\end{definition}
+
+We think of elements of \(\Sigma\) as \term{symbols} or \term{letters}.
+
+\begin{examples*}
+    \begin{itemize}
+        \item The alphabet \(\Sigma = \Bqty{0, 1}\) is the binary alphabet.
+        \item The alphabet \(\Sigma = \Bqty{0, 1, \ldots, 9}\) is the decimal alphabet.
+        \item The alphabet \(\Sigma = \Bqty{a, b, c, \ldots, z}\) is the lowercase English alphabet.
+        \item Suppose we have a group \(G\) and \(x, y \in g\). Then (ignoring the degenerate cases) we could take an alphabet of size \(4\) given by \(\Sigma = \Bqty{x, y, x\inverse, y\inverse} = \Bqty{x, y, X, Y}\) where \(X = x\inverse\), \(Y = y\inverse\) are \term{formal inverses} of \(x\) and \(y\) respectively.
+    \end{itemize}
+\end{examples*}
+
+\begin{definition}[String/Word]
+    A \term{string} or \term{word} of length \(m\) over an alphabet \(\Sigma\) is given by a list of length \(m\) (more formally, an \(m\)-tuple)
+    \[
+        \alpha = x_1 x_2 \ldots x_m
+    \]
+    where \(x_i \in \Sigma\). We denote the \term{length} of \(\alpha\) by \(\abs{\alpha} = m\). The \term{empty word} is denoted by \(\emptyword\) and has length \(0\). In other words,
+    \[
+        \Sigma^0 = \Bqty{\emptyword} \qand \abs{\emptyword} = 0.
+    \]
+
+    Let \(\Sigma^{\ast}\) denote the set of \term{all strings over \(\Sigma\)}, i.e.
+    \[
+        \Sigma^{\ast} = \bigcup_{n \in \NN} \Sigma^n,
+    \]
+    and let \(\Sigma^{+}\) denote the set of \term{all non-empty strings over \(\Sigma\)}, i.e.
+    \[
+        \Sigma^{+} = \Sigma^{\ast} \setminus \Bqty{\emptyword}.
+    \]
+\end{definition}
+
+\begin{remark}
+    Note the number of words of length \(n\) is give by
+    \[
+        \abs{\Sigma^n} = \abs{\Sigma}^n,
+    \]
+    and the set \(\Sigma^{\ast}\) is countable.
+\end{remark}
+
+\begin{definition}[Concatanation, Substring/Subword]
+    If \(\alpha = x_1 x_2 \ldots x_m \in \Sigma^m\) and \(\beta = y_1 y_2 \ldots y_n \in \Sigma^n\), then the \term{concatenation} \(\alpha \beta\) is \(x_1 \ldots x_m y_1 \ldots y_n \in \Sigma^{m + n}\), with \(\abs{\alpha \beta} = \abs{\alpha}\abs{\beta}\).
+
+    For \(0 \leq i \leq j \leq m\), \(x_{i + 1} \ldots x_j\) is a \term{substring/word} of \(\alpha\). In particular, if \(i = j\), then \(x_{i + 1} \ldots x_j = \emptyword\) is the empty string.
+\end{definition}
+
+\begin{remark}
+    In other words, for \(\alpha, \beta \in \Sigma^{\ast}\), \(\beta\) is a substring of \(\alpha\) if there exist \(\gamma, \delta \in \Sigma^{\ast}\) such that \(\alpha = \gamma \beta \delta\).
+\end{remark}
+
+\begin{definition}[Homomorphism]
+    For alphabets \(\Sigma\) and \(\Pi\), a \term{homomorphism} is a function \(\functiondomain{h}{\Sigma^{\ast}}{\Pi^{\ast}}\) such that for all \(\alpha, \beta \in \Sigma^{\ast}\),
+    \[
+        h\pqty{\alpha \beta} = h\pqty{\alpha} h\pqty{\beta}.
+    \]
+
+    In particular, \(h\pqty{\emptyword} = \emptyword\).
+\end{definition}
+
+\begin{remark}
+    Alternatively, given any function \(\functiondomain{f}{\Sigma}{\Pi^{\ast}}\), there exists a unique homomorphism extending \(f\) by concatenation (by induction on the word length).
+\end{remark}
+
+\begin{definition}[Language]
+    A \term{(formal) language} \(L\) over an alphabet \(\Sigma\) is a subset of \(\Sigma^{\ast}\).
+\end{definition}
+
+\begin{remark}
+    Any language \(L\) is countable since we are picking it from a countable set. However, the set of all languages over \(\Sigma\) is uncountable since it is the power set of \(\Sigma^{\ast}\).
+\end{remark}
+
+\begin{examples*}
+    \begin{itemize}
+        \item Suppose \(\Sigma = \Bqty{a, b}\). Then a language over \(\Sigma\) could be given by
+        \[
+            L = \Bqty{\text{all words with the same number of \(a\)'s and \(b\)s}}.
+        \]
+        \item Suppose \(\Sigma = \Bqty{1}\), then we can think of a language over \(\Sigma\) as \(L \subseteq \NN = \Sigma^{\ast}\).
+        \item Suppose \(\Sigma = \Bqty{a, b, \ldots, z}\). Then \(L\) could be the set of all words that are valid English words. In this case, \(L\) is a \term{finite language} since there are only finitely many valid English words.
+        \item Let \(G = \angBrac{x_1, \ldots, x_n}\) be a finitely-generated group. Then with the alphabet
+        \[
+            \Sigma = \Bqty{x_1, \ldots, x_n, X_1, \ldots, X_n},
+        \]
+        then a word \(w \in \Sigma^{\ast}\) becomes an element of \(G\) by multiplying out. Define the language
+        \[
+            L = \set{w \in \Sigma^{\ast}}{w = e \text{ in } G}.
+        \]
+
+        Say \(G = \ZZ = \angBrac{x}\) is the infinite cyclic group (\(\ZZ\)). Then
+        \[
+            L = \Bqty{\text{all words with the same number of \(x\)'s and \(X\)s}}.
+        \]
+    \end{itemize}
+\end{examples*}

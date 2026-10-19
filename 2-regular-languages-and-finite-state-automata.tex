@@ -1,0 +1,369 @@
+\section{Regular Languages and Finite-State Automota}
+\subsection{Deterministic Finite-State Automata (DFA)}
+
+Suppose we want to describe a language \(L\) over \(\Sigma\), using only a finite amount of information. We could extend \(\Sigma\) with other symbols to an alphabet \(\Pi\) and assign (non-uniquely) a particular a word \(w \in \Pi^{\ast}\) to \(L\). But we can only do this for countably many \(L\). But we want \(w\) to \term{describe} \(L\).
+
+\begin{example}
+    For example, if \(\Sigma = \Bqty{0, 1}\) and \(L\) is all words over \(\Sigma\) that start with a \(1\). We can use \(\Pi = \Bqty{0, 1, a, \ldots, z, \_}\) and using natural language, \(w = \texttt{all words over \(\Sigma\) that start with a \(1\)}\).
+\end{example}
+
+We will see a countable class of languages, where we can do this not via natural language, but symbolically We first give a computational method to determine these languages.
+
+\begin{definition}[Deterministic Finite-State Automaton (DFA)]
+    A \term{deterministic finite-state automaton (DFA)} is a quintuple \(D = \pqty{Q, \Sigma, \delta, q_0, F}\) consisting of:
+    \begin{itemize}
+        \item a finite non-empty set of \term{states} \(Q\),
+        \item an alphabet \(\Sigma\),
+        \item a \term{transition function} \(\functiondomain{\delta}{Q \times \Sigma}{Q}\),
+        \item a \term{starting state} \(q_0 \in Q\),
+        \item a set of \term{accept states} \(F \subseteq Q\).
+    \end{itemize}
+\end{definition}
+
+\begin{remark}
+    The input to a DFA is any word \(w \in \Sigma^{\ast}\). The DFA starts in the starting state \(q_0\), and reads the first letter \(x_1\). It then moves to \(\delta\pqty{q_0, x_1}\) and reads \(x_2\), hence moving to \(\delta\pqty{\delta\pqty{q_0, x_1}, x_2}\), etc.
+
+    When all letters of \(w\) is read, if the DFA is in an accept state, then \(w\) is \term{accepted}, and otherwise \(w\) is \term{rejected}.
+\end{remark}
+
+\begin{example*}
+    The empty string \(\emptyword\) is accepted, if and only if \(q_0 \in F\).
+\end{example*}
+
+\begin{definition}[Transition Diagram]
+    A \term{transition diagram} of a DFA \(D\) is a directed, labelled graph such that
+    \begin{enumerate}[label=(\arabic*)]
+        \item the vertex set is \(Q\),
+        \item for each \(\pqty{q, \sigma} \in Q \times \Sigma\), draw an directed edge from \(q\) to \(\delta\pqty{q, \sigma}\) labelled by \(\sigma\). (This means there are exactly \(\abs{\Sigma}\) out-edges from every vertex.)
+        \item add an arrow from ``nowhere'' to \(q_0\) to indicate the starting state,
+        \item draw double circles around the accept states in \(F\) (and single circles otherwise).
+    \end{enumerate}
+
+    If there are lots of edges from some vertex to the same vertex, then we can draw one edge with label which is a subset of \(\Sigma\).
+\end{definition}
+
+\begin{example*}
+    Suppose we work in the natural language alphabet, and we want to accept strings that contain the substring \texttt{cat}. One might attempt to draw a transition diagram as in \autoref{fig:dfa-cat-incorrect}.
+
+    This is, however, incorrect, since it does not accept the string \texttt{ccat}, or \texttt{cacat}. The correct transition diagram is given in \autoref{fig:dfa-cat-correct}.
+\end{example*}
+
+\begin{figure}[ht!]
+    \centering
+    \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=3cm,semithick,initial text=Start]
+        \node[state,initial]   (q0)                    {\(q_0\)};
+        \node[state]           (q1) [right of=q0]      {\(q_1\)};
+        \node[state]           (q2) [right of=q1]      {\(q_2\)};
+        \node[state,accepting] (q3) [right of=q2]      {\(q_3\)};
+
+        \path (q0) edge                node {\texttt{c}} (q1)
+                (q1) edge                node {\texttt{a}} (q2)
+                (q2) edge                node {\texttt{t}} (q3)
+                (q0) edge [loop below]   node {\(\Sigma\setminus\Bqty{\texttt{c}}\)} (q0)
+                (q1) edge [bend left=30] node {\(\Sigma\setminus\Bqty{\texttt{a}}\)} (q0)
+                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\Bqty{\texttt{t}}\)} (q0)
+                (q3) edge [loop right]  node {\(\Sigma\)} (q3);
+    \end{tikzpicture}
+    \caption{Incorrect Attempt of DFA for strings containing \texttt{cat}}
+    \label{fig:dfa-cat-incorrect}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=3cm,semithick,initial text=Start]
+        \node[state,initial]   (q0)                    {\(q_0\)};
+        \node[state]           (q1) [right of=q0]      {\(q_1\)};
+        \node[state]           (q2) [right of=q1]      {\(q_2\)};
+        \node[state,accepting] (q3) [right of=q2]      {\(q_3\)};
+
+        \path (q0) edge                node {\texttt{c}} (q1)
+                (q1) edge                node {\texttt{a}} (q2)
+                (q2) edge                node {\texttt{t}} (q3)
+                (q0) edge [loop below]   node {\(\Sigma\setminus\Bqty{\texttt{c}}\)} (q0)
+                (q1) edge [bend left=30] node {\(\Sigma\setminus\Bqty{\texttt{a, c}}\)} (q0)
+                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\Bqty{\texttt{c, t}}\)} (q0)
+                (q3) edge [loop right]  node {\(\Sigma\)} (q3)
+                (q1) edge [loop below]   node {\texttt{c}} (q1)
+                (q2) edge [bend left=30]   node {\texttt{c}} (q1);
+    \end{tikzpicture}
+    \caption{Correct Attempt of DFA for strings containing \texttt{cat}}
+    \label{fig:dfa-cat-correct}
+\end{figure}
+
+\begin{definition}[Transition Table]
+    A \term{transition table} of a DFA \(D\) is a table with rows indexed by the states \(Q\) and columns indexed by the alphabet \(\Sigma\), such that the entry in row \(q\) and column \(\sigma\) is \(\delta\pqty{q, \sigma}\).
+\end{definition}
+
+\subsection{Regular Languages}
+
+\begin{definition}[Extended Transition Function (DFA)]
+    \label{def:extended-transition-function-dfa}%
+    The \term{extended transition function} of a DFA \(D\) is given by
+    \[
+        \functiondomain{\hat{\delta}}{Q \times \Sigma^{\ast}}{Q}
+    \]
+    defined inductively by
+    \begin{itemize}
+        \item \(\hat{\delta} \pqty{q, \epsilon} = q\),
+        \item \(\hat{\delta} \pqty{q, \sigma_1} = \delta(q, \sigma_1)\), and
+        \item \(\hat{\delta} \pqty{q, \sigma_1 \ldots \sigma_k} = \delta \pqty{\hat{\delta} \pqty{q, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k}\).
+    \end{itemize}
+\end{definition}
+
+For any \(w \in \Sigma^{\ast}\), we have \(\hat{\delta}\pqty{q_0, w}\) is the end state of an input \(w\).
+
+\begin{lemma}[Transitivity of Extended Transition Function]
+    For all \(1 \leq l \leq k\), we have
+    \[
+        \hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_k} = \hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_l}, \sigma_{l + 1} \ldots \sigma_k}.
+    \]
+\end{lemma}
+
+\begin{proof}
+    We may show by induction on \(k\). Base case \(k = 1\) is trivial. Suppose the result holds for \(k - 1\). Then
+    \begin{align*}
+        \hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_k} &= \delta\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k} \\
+        &= \delta\pqty{\hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_l}, \sigma_{l + 1} \ldots \sigma_{k - 1}}, \sigma_k} \\
+        &= \hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_l}, \sigma_{l + 1} \ldots \sigma_k}.
+    \end{align*}
+\end{proof}
+
+\begin{definition}[Regular Languages]
+    Let \(D\) be a DFA. The \term{language accepted by \(D\)}, denoted by \(\langacc{L}(D)\), is the set of all words accepted by \(D\), i.e., the set of all \(w \in \Sigma^{\ast}\) such that \(\hat{\delta}\pqty{q_0, w} \in F\).
+    
+    A language \(L \subseteq \Sigma^{\ast}\) is \term{regular} if there exists a DFA \(D\) such that \(L = \langacc(D)\).
+\end{definition}
+
+\subsection{Non-Determinism and \(\emptyword\)-Transitions}
+
+We now examine a (seemingly) more general construction, where we can choose which state to move to (or equivalently, moving to many states simultaneously).
+
+\begin{definition}[Non-Deterministic Finite-State Automaton (NFA)]
+    A \term{non-deterministic finite-state automaton (NFA)} is a quintuple \(N = \pqty{Q, \Sigma, \delta, q_0, F}\) consisting of:
+    \begin{itemize}
+        \item a finite non-empty set of \term{states} \(Q\),
+        \item an alphabet \(\Sigma\),
+        \item a \term{transition function} \(\functiondomain{\delta}{Q \times \Sigma}{\powerset\pqty{Q}}\),
+        \item a \term{starting state} \(q_0 \in Q\),
+        \item a set of \term{accept states} \(F \subseteq Q\).
+    \end{itemize}
+\end{definition}
+
+\begin{remark}
+    Note the difference of a NFA from a DFA is that the transition function \(\delta\) now maps to a \emph{set of states}, rather than a single state. This means that, for a given state and input symbol, the NFA can transition to a number of possible next states, possibly none at all (discussed below).
+\end{remark}
+
+An NFA has input \(w = \sigma_1, \ldots, \sigma_k \in \Sigma^{\ast}\) while in state \(q_0\), reads \(\sigma\), then ``moves to'' all states in \(\delta\pqty{q_0, \sigma_1} \subseteq Q\). For each of these states, it reads \(\sigma_2\) and moves to all states in \(\delta\pqty{q, \sigma_2}\), so we are now at
+\[
+    \bigcup_{p \in \delta\pqty{q_0, \sigma_1}} \delta\pqty{p, \sigma_2} \subseteq Q,
+\]
+etc. We continue to get ``end states'' \(E_W \subseteq Q\). If any of the resulting states after reading the entire input \(w\) is an accept state, i.e., \(E_w \cap F \neq \emptyset\), then \(w\) is accepted by the NFA, and otherwise \(w\) is rejected.
+
+It could be well possible that \(\delta\pqty{p, \sigma} = \emptyset\) as \(\emptyset \in \powerset\pqty{Q}\). But what if we are currently in the set of states \(S \subseteq Q\), and we read \(\sigma\), only to find
+\[
+    \bigcup_{p \in S} \delta\pqty{p, \sigma} = \emptyset?
+\]
+
+Then we are in ``no state'' (the set of states is empty), and the NFA rejects the input \(w\).
+
+Given an NFA \(N\), we may define the transition diagram and table in the same way as for a DFA.
+
+\begin{figure}[ht!]
+    \centering
+    \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=3cm,semithick,initial text=Start]
+        \node[state, initial] (q0)  {\(q_0\)};
+        \node[state] (a)  [above right=of q0] {\(a\)};
+        \node[state] (b)  [right=of q0] {\(b\)};
+        \node[state] (c)  [right=of b] {\(c\)};
+        \node[state] (d)  [below right=of q0] {\(d\)};
+
+        \path (q0) edge [bend left=15] node {\(\sigma_1\)} (a)
+            (q0) edge node {\(\sigma_1\)} (b)
+            (q0) edge [bend left=20] node {\(\sigma_1\)} (d)
+            (b) edge node {\(\sigma_2\)} (c)
+            (d) edge node[swap] {\(\sigma_2\)} (c)
+            (d) edge [bend left=20] node {\(\sigma_2\)} (q0)
+            (d) edge [loop below] node {\(\sigma_2\)} (d);
+    \end{tikzpicture}
+    \caption{Part of an NFA}
+    \label{fig:nfa-example}%
+\end{figure}
+
+\begin{example*}
+    Consider \autoref{fig:nfa-example}. If we read the word \(w = \sigma_1 \sigma_2\), then after state one, we are in the set of states \(\Bqty{a, b, d}\). After reading \(\sigma_2\), we are in the set of states \(\Bqty{c, q_0, d}\).
+\end{example*}
+
+\begin{definition}[Extended Transtion Function (NFA)]
+    \label{def:extended-transition-function-nfa}%
+    The \term{extended transition function} of an NFA \(N\) is given by
+    \[
+        \functiondomain{\hat{\delta}}{Q \times \Sigma^{\ast}}{\powerset\pqty{Q}}
+    \]
+    defined inductively by
+    \begin{itemize}
+        \item \(\hat{\delta} \pqty{q, \epsilon} = \Bqty{q}\),
+        \item \(\hat{\delta} \pqty{q, \sigma_1} = \delta(q, \sigma_1)\), and
+        \item the inductive step
+        \[
+        \hat{\delta} \pqty{q, \sigma_1 \ldots \sigma_k} = \bigcup_{p \in \hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k}.
+        \]
+    \end{itemize}
+\end{definition}
+
+In other words, \(\hat{\delta}\pqty{q, w}\) is the set of all ``end states'' \(E_w\)after reading \(w\) starting from \(q\).
+
+Furthermore, it is going to be even more flexible, if we can change \emph{certain} states, without reading a symbol. Such transitions are called \term{\(\emptyword\)-transitions}. We would like to think of this as reading \(\emptyword\) (``nothing'') between the letters, whenever and as often as we like.
+
+\begin{definition}[\(\emptyword\)-NFA]
+    An \term{\(\emptyword\)-NFA} is a quintuple \(E = \pqty{Q, \Sigma, \delta, q_0, F}\) just like an NFA, except that the \term{transition function} is now
+    \[
+        \functiondomain{\delta}{Q \times \pqty{\Sigma \cup \Bqty{\emptyword}}}{\powerset\pqty{Q}}.
+    \]
+\end{definition}
+
+Here, rather than the empty word being a symbol, it ``acts as a symbol''.
+
+Now, we want to define how we process a word.
+
+\begin{definition}[\(\emptyword\)-Closure]
+    For an \(\emptyword\)-NFA \(E\) and a state \(Q\), we define the \term{\(\emptyword\)-closure} \(\ecl\pqty{q}\) of \(q\) as the set of states reached from \(q\), by repeated \(\emptyword\)-transitions. That is, define inductively \(S_0 \pqty{q} = \Bqty{q}\), \(S_1 \pqty{q} = \Bqty{q} \cup \delta\pqty{q, \emptyword}\), and 
+    \[
+        S_{i + 1} \pqty{q} = S_i \pqty{q} \cup \bigcup_{r \in S_i\pqty{q}} \delta\pqty{r, \emptyword}.
+    \]
+    and
+    \[
+        \ecl\pqty{q} = \bigcup_{i = 0}^{\infty} S_i\pqty{q} = S_N\pqty{q} \subseteq Q.
+    \]
+    for some \(N\) (since this is an ascending chain of finite sets, which are subsets of a finite set).
+
+    The \term{\(\emptyword\)-closure} of a set of states \(S \subseteq Q\) is defined as
+    \[
+        \ecl\pqty{S} = \bigcup_{q \in S} \ecl\pqty{q}.
+    \]
+
+    Clearly we have \(S \subseteq \ecl\pqty{S}\), and the \(\emptyword\)-closure of a union of sets is the union of the \(\emptyword\)-closures of the sets.
+
+    A given set of state \(R \subseteq Q\) is \term{\(\emptyword\)-closed} if \(\ecl\pqty{R} = R\).
+\end{definition}
+
+\begin{lemma}[\(\emptyword\)-Closure is \(\emptyword\)-Closed]
+    For any \(S \subseteq Q\), \(\ecl\pqty{S}\) is \(\emptyword\)-closed.
+\end{lemma}
+
+\begin{proof}
+    Let \(C = \ecl\pqty{S}\). We would like to show that
+    \[
+        \ecl\pqty{C} \subseteq C = \ecl\pqty{S}.
+    \]
+
+    Let \(x \in \ecl\pqty{C}\). Then \(x \in \ecl\pqty{r}\) for some \(r \in C\). So there exists some finite sequence of \(\emptyword\)-transitions from \(r\) to \(x\), i.e. mathematically, we have \(r_0 = r\), \(r_1 \in \delta\pqty{r_0, \emptyword}\), \(r_2 \in \delta\pqty{r_1, \emptyword}\), \dots, \(r_n = x \in \delta\pqty{r_{n - 1}, \emptyword}\).
+
+    But \(r \in \ecl\pqty{S}\), so there is some \(s \in S\) with length \(m\) sequence of \(\emptyword\)-transitions from \(s\) to \(r\). We put these together to get a sequence of \(\emptyword\)-transitions from \(s\) to \(x\), which means \(x \in S_{m + n} \pqty{s} \subseteq \ecl\pqty{s} \subseteq \ecl\pqty{S}\).
+\end{proof}
+
+An \(\emptyword\)-NFA has input \(w = \sigma_1 \cdots \sigma_k \in \Sigma^{\ast}\). From \(q_0\), it moves to all states in \(\ecl\pqty{q_0}\) and only then reads \(\sigma_1\). For each \(x \in \ecl\pqty{q_0}\), it takes the set of states \(\delta\pqty{x, \sigma_1}\), and for each \(y_x \in \delta\pqty{x, \sigma_1}\), it goes to \(\ecl\pqty{y_x}\), and the automaton is now in the set these states, union over all \(y_x\) over all such \(x\). We continue this until the word \(w\) is read, then \(w\) is accepted if any of the end states is an accept state, and rejected otherwise.
+
+\begin{definition}[Extended Transition Function (\(\emptyword\)-NFA)]
+    The \term{extended transition function} of an \(\emptyword\)-NFA \(E\) is given by
+    \[
+        \functiondomain{\hat{\delta}}{Q \times \Sigma^{\ast}}{\powerset\pqty{Q}}
+    \]
+    defined inductively by
+    \begin{itemize}
+        \item the empty word \(\hat{\delta} \pqty{q, \epsilon} = \ecl\pqty{q}\),
+        \item a one-character word
+        \[
+            \hat{\delta} \pqty{q, \sigma} = \ecl\pqty{\bigcup_{p \in \ecl\pqty{q}} \delta\pqty{p, \sigma}},
+        \]
+        and
+        \item the inductive step
+        \[
+            \hat{\delta} \pqty{q, \sigma_1 \ldots \sigma_k} = \ecl\pqty{\bigcup_{p \in \hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k}}.
+        \]
+    \end{itemize}
+\end{definition}
+
+\subsection{Equivalence of DFAs, NFAs and \(\emptyword\)-NFAs}
+
+Clearly, any DFA ``is'' an NFA by defining the new transition function
+\[
+    \delta'\pqty{q, \sigma} = \Bqty{\delta\pqty{q, \sigma}},
+\]
+and any NFA is an \(\emptyword\)-NFA, by extending transition for
+\[
+    \delta\pqty{q, \emptyword} = \emptyset
+\]
+such that \(\ecl\pqty{S} = S\) for all \(S\).
+
+Underlying all this is, however, languages. Any regular language is the language of an (\(\emptyword\)-) NFA clearly by above.
+
+\begin{definition}[Language Accepted by NFA/\(\emptyword\)-NFA]
+    Let \(N\) be an NFA (or an \(\emptyword\)-NFA). The \term{language accepted by \(N\)}, denoted by \(\langacc\pqty{N}\), is the set of all words accepted by \(N\), i.e.,
+    \[
+        \langacc\pqty{N} = \set{w \in \Sigma^{\ast}}{\hat{\delta}\pqty{q_0, w} \cap F \neq \emptyset}.
+    \]
+\end{definition}
+
+In fact, the converse is true as well, and we will show this by the \term{subset construction}. We will show this for NFAs first, and the idea for \(\emptyword\)-NFAs naturally follows.
+
+Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabet \(\Sigma\), such that \(\langacc\pqty{N} = \langacc\pqty{D}\).
+
+\begin{definition}[Subset Construction]
+    \label{def:subset-construction}%
+    For the NFA \(N = \pqty{Q, \Sigma, \delta, q_0, F}\), the \term{subset construction} for \(N\) produces the DFA \(D = \pqty{\powerset\pqty{Q}, \Sigma, \Delta, \Bqty{q_0}, \mathcal{F}}\), where the accept states are given by the set of subsets of states that contain at least one accept state of \(N\):
+    \[
+        \mathcal{F} = \set{S \subseteq Q}{S \cap F \neq \emptyset},
+    \]
+    and for \(S \subseteq Q, \sigma \in \Sigma\), we define
+    \[
+        \Delta\pqty{S, \sigma} = \bigcup_{q \in S} \delta\pqty{q, \sigma} \in \powerset\pqty{Q}.
+    \]
+
+    (Intuitively, \(\Delta\) gives the subset of states reached from \(S\) by following an edge labelled \(\sigma\).)
+\end{definition}
+
+\begin{theorem}
+    \label{thm:subset-construction-equivalence}%
+    For the NFA \(N\) and DFA \(D\) obtained from the subset construction, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma^{\ast}\), we have
+    \[
+        \hat{\Delta}\pqty{\Bqty{q_0}, w} = \hat{\delta}\pqty{q_0, w}.
+    \]
+\end{theorem}
+
+\begin{proof}
+    We prove by induction on the length \(k = \abs{w}\). Base case \(k = 0\) is \(w = \emptyword\), then
+    \[
+        \hat{\Delta}\pqty{\Bqty{q_0}, \emptyword} = \Bqty{q_0} = \hat{\delta}\pqty{q_0, \emptyword}.
+    \]
+
+    Now, suppose that
+    \[
+        \hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \ldots \sigma_{k - 1}} = \hat{\delta}\pqty{q_0, \sigma_1 \ldots \sigma_{k - 1}}.
+    \]
+
+    Then, for \(w = \sigma_1 \ldots \sigma_{k - 1} \sigma_k\), we have
+    \begin{align*}
+        \hat{\delta} \pqty{q_0, w} &= \bigcup_{p \in \hat{\delta}\pqty{q_0, \sigma_1 \ldots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k} && \text{by \autoref{def:extended-transition-function-nfa}}\\
+        &= \Delta \pqty{\hat{\delta} \pqty{q_0, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k} && \text{by \autoref{def:subset-construction}}\\
+        &= \Delta \pqty{\hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k} && \text{by Induction Hypothesis} \\
+        &= \hat{\Delta} \pqty{\Bqty{q_0}, w}. && \text{by \autoref{def:extended-transition-function-dfa}}
+    \end{align*}
+\end{proof}
+
+\begin{corollary}[Equivalence of DFAs and NFAs]
+    A language \(L\) is accepted by a DFA if and only if it is accepted by an NFA.
+\end{corollary}
+
+\begin{proof}
+    If \(L\) is accepted by a DFA, then it is accepted by an NFA, since any DFA is an NFA.
+    
+    Conversely, if \(L\) is accepted by an NFA \(N\), then we can construct a DFA \(D\) from the subset construction. Then \(w\) is accepted by \(N\), if and only if
+    \[
+        \hat{\delta} \pqty{q_0, w} \cap F \neq \emptyset,
+    \]
+    which by \autoref{thm:subset-construction-equivalence} is if and only if
+    \[
+        \hat{\Delta} \pqty{\Bqty{q_0}, w} \in \mathcal{F},
+    \]
+    which is if and only if \(w\) is accepted by \(D\).
+\end{proof}
