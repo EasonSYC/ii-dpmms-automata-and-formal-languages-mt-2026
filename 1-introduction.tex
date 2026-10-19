@@ -38,13 +38,13 @@ We think of elements of \(\Sigma\) as \term{symbols} or \term{letters}.
         \Sigma^0 = \Bqty{\emptyword} \qand \abs{\emptyword} = 0.
     \]
 
-    Let \(\Sigma^{\ast}\) denote the set of \term{all strings over \(\Sigma\)}, i.e.
+    Let \(\Sigma\kstar\) denote the set of \term{all strings over \(\Sigma\)}, i.e.
     \[
-        \Sigma^{\ast} = \bigcup_{n \in \NN} \Sigma^n,
+        \Sigma\kstar = \bigcup_{n \in \NN} \Sigma^n,
     \]
-    and let \(\Sigma^{+}\) denote the set of \term{all non-empty strings over \(\Sigma\)}, i.e.
+    and let \(\Sigma\kplus\) denote the set of \term{all non-empty strings over \(\Sigma\)}, i.e.
     \[
-        \Sigma^{+} = \Sigma^{\ast} \setminus \Bqty{\emptyword}.
+        \Sigma\kplus = \Sigma\kstar \setminus \Bqty{\emptyword}.
     \]
 \end{definition}
 
@@ -53,7 +53,7 @@ We think of elements of \(\Sigma\) as \term{symbols} or \term{letters}.
     \[
         \abs{\Sigma^n} = \abs{\Sigma}^n,
     \]
-    and the set \(\Sigma^{\ast}\) is countable.
+    and the set \(\Sigma\kstar\) is countable.
 \end{remark}
 
 \begin{definition}[Concatanation, Substring/Subword]
@@ -63,11 +63,11 @@ We think of elements of \(\Sigma\) as \term{symbols} or \term{letters}.
 \end{definition}
 
 \begin{remark}
-    In other words, for \(\alpha, \beta \in \Sigma^{\ast}\), \(\beta\) is a substring of \(\alpha\) if there exist \(\gamma, \delta \in \Sigma^{\ast}\) such that \(\alpha = \gamma \beta \delta\).
+    In other words, for \(\alpha, \beta \in \Sigma\kstar\), \(\beta\) is a substring of \(\alpha\) if there exist \(\gamma, \delta \in \Sigma\kstar\) such that \(\alpha = \gamma \beta \delta\).
 \end{remark}
 
 \begin{definition}[Homomorphism]
-    For alphabets \(\Sigma\) and \(\Pi\), a \term{homomorphism} is a function \(\functiondomain{h}{\Sigma^{\ast}}{\Pi^{\ast}}\) such that for all \(\alpha, \beta \in \Sigma^{\ast}\),
+    For alphabets \(\Sigma\) and \(\Pi\), a \term{homomorphism} is a function \(\functiondomain{h}{\Sigma\kstar}{\Pi\kstar}\) such that for all \(\alpha, \beta \in \Sigma\kstar\),
     \[
         h\pqty{\alpha \beta} = h\pqty{\alpha} h\pqty{\beta}.
     \]
@@ -76,15 +76,15 @@ We think of elements of \(\Sigma\) as \term{symbols} or \term{letters}.
 \end{definition}
 
 \begin{remark}
-    Alternatively, given any function \(\functiondomain{f}{\Sigma}{\Pi^{\ast}}\), there exists a unique homomorphism extending \(f\) by concatenation (by induction on the word length).
+    Alternatively, given any function \(\functiondomain{f}{\Sigma}{\Pi\kstar}\), there exists a unique homomorphism extending \(f\) by concatenation (by induction on the word length).
 \end{remark}
 
 \begin{definition}[Language]
-    A \term{(formal) language} \(L\) over an alphabet \(\Sigma\) is a subset of \(\Sigma^{\ast}\).
+    A \term{(formal) language} \(L\) over an alphabet \(\Sigma\) is a subset of \(\Sigma\kstar\).
 \end{definition}
 
 \begin{remark}
-    Any language \(L\) is countable since we are picking it from a countable set. However, the set of all languages over \(\Sigma\) is uncountable since it is the power set of \(\Sigma^{\ast}\).
+    Any language \(L\) is countable since we are picking it from a countable set. However, the set of all languages over \(\Sigma\) is uncountable since it is the power set of \(\Sigma\kstar\).
 \end{remark}
 
 \begin{examples*}
@@ -93,15 +93,15 @@ We think of elements of \(\Sigma\) as \term{symbols} or \term{letters}.
         \[
             L = \Bqty{\text{all words with the same number of \(a\)'s and \(b\)s}}.
         \]
-        \item Suppose \(\Sigma = \Bqty{1}\), then we can think of a language over \(\Sigma\) as \(L \subseteq \NN = \Sigma^{\ast}\).
+        \item Suppose \(\Sigma = \Bqty{1}\), then we can think of a language over \(\Sigma\) as \(L \subseteq \NN = \Sigma\kstar\).
         \item Suppose \(\Sigma = \Bqty{a, b, \ldots, z}\). Then \(L\) could be the set of all words that are valid English words. In this case, \(L\) is a \term{finite language} since there are only finitely many valid English words.
         \item Let \(G = \angBrac{x_1, \ldots, x_n}\) be a finitely-generated group. Then with the alphabet
         \[
             \Sigma = \Bqty{x_1, \ldots, x_n, X_1, \ldots, X_n},
         \]
-        then a word \(w \in \Sigma^{\ast}\) becomes an element of \(G\) by multiplying out. Define the language
+        then a word \(w \in \Sigma\kstar\) becomes an element of \(G\) by multiplying out. Define the language
         \[
-            L = \set{w \in \Sigma^{\ast}}{w = e \text{ in } G}.
+            L = \set{w \in \Sigma\kstar}{w = e \text{ in } G}.
         \]
 
         Say \(G = \ZZ = \angBrac{x}\) is the infinite cyclic group (\(\ZZ\)). Then

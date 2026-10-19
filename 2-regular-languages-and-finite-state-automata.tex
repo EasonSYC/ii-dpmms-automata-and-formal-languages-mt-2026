@@ -1,7 +1,7 @@
 \section{Regular Languages and Finite-State Automota}
 \subsection{Deterministic Finite-State Automata (DFA)}
 
-Suppose we want to describe a language \(L\) over \(\Sigma\), using only a finite amount of information. We could extend \(\Sigma\) with other symbols to an alphabet \(\Pi\) and assign (non-uniquely) a particular a word \(w \in \Pi^{\ast}\) to \(L\). But we can only do this for countably many \(L\). But we want \(w\) to \term{describe} \(L\).
+Suppose we want to describe a language \(L\) over \(\Sigma\), using only a finite amount of information. We could extend \(\Sigma\) with other symbols to an alphabet \(\Pi\) and assign (non-uniquely) a particular a word \(w \in \Pi\kstar\) to \(L\). But we can only do this for countably many \(L\). But we want \(w\) to \term{describe} \(L\).
 
 \begin{example}
     For example, if \(\Sigma = \Bqty{0, 1}\) and \(L\) is all words over \(\Sigma\) that start with a \(1\). We can use \(\Pi = \Bqty{0, 1, a, \ldots, z, \_}\) and using natural language, \(w = \texttt{all words over \(\Sigma\) that start with a \(1\)}\).
@@ -21,7 +21,7 @@ We will see a countable class of languages, where we can do this not via natural
 \end{definition}
 
 \begin{remark}
-    The input to a DFA is any word \(w \in \Sigma^{\ast}\). The DFA starts in the starting state \(q_0\), and reads the first letter \(x_1\). It then moves to \(\delta\pqty{q_0, x_1}\) and reads \(x_2\), hence moving to \(\delta\pqty{\delta\pqty{q_0, x_1}, x_2}\), etc.
+    The input to a DFA is any word \(w \in \Sigma\kstar\). The DFA starts in the starting state \(q_0\), and reads the first letter \(x_1\). It then moves to \(\delta\pqty{q_0, x_1}\) and reads \(x_2\), hence moving to \(\delta\pqty{\delta\pqty{q_0, x_1}, x_2}\), etc.
 
     When all letters of \(w\) is read, if the DFA is in an accept state, then \(w\) is \term{accepted}, and otherwise \(w\) is \term{rejected}.
 \end{remark}
@@ -100,7 +100,7 @@ We will see a countable class of languages, where we can do this not via natural
     \label{def:extended-transition-function-dfa}%
     The \term{extended transition function} of a DFA \(D\) is given by
     \[
-        \functiondomain{\hat{\delta}}{Q \times \Sigma^{\ast}}{Q}
+        \functiondomain{\hat{\delta}}{Q \times \Sigma\kstar}{Q}
     \]
     defined inductively by
     \begin{itemize}
@@ -110,7 +110,7 @@ We will see a countable class of languages, where we can do this not via natural
     \end{itemize}
 \end{definition}
 
-For any \(w \in \Sigma^{\ast}\), we have \(\hat{\delta}\pqty{q_0, w}\) is the end state of an input \(w\).
+For any \(w \in \Sigma\kstar\), we have \(\hat{\delta}\pqty{q_0, w}\) is the end state of an input \(w\).
 
 \begin{lemma}[Transitivity of Extended Transition Function]
     For all \(1 \leq l \leq k\), we have
@@ -129,9 +129,9 @@ For any \(w \in \Sigma^{\ast}\), we have \(\hat{\delta}\pqty{q_0, w}\) is the en
 \end{proof}
 
 \begin{definition}[Regular Languages]
-    Let \(D\) be a DFA. The \term{language accepted by \(D\)}, denoted by \(\langacc{L}(D)\), is the set of all words accepted by \(D\), i.e., the set of all \(w \in \Sigma^{\ast}\) such that \(\hat{\delta}\pqty{q_0, w} \in F\).
+    Let \(D\) be a DFA. The \term{language accepted by \(D\)}, denoted by \(\langacc{L}(D)\), is the set of all words accepted by \(D\), i.e., the set of all \(w \in \Sigma\kstar\) such that \(\hat{\delta}\pqty{q_0, w} \in F\).
     
-    A language \(L \subseteq \Sigma^{\ast}\) is \term{regular} if there exists a DFA \(D\) such that \(L = \langacc(D)\).
+    A language \(L \subseteq \Sigma\kstar\) is \term{regular} if there exists a DFA \(D\) such that \(L = \langacc(D)\).
 \end{definition}
 
 \subsection{Non-Determinism and \(\emptyword\)-Transitions}
@@ -153,7 +153,7 @@ We now examine a (seemingly) more general construction, where we can choose whic
     Note the difference of a NFA from a DFA is that the transition function \(\delta\) now maps to a \emph{set of states}, rather than a single state. This means that, for a given state and input symbol, the NFA can transition to a number of possible next states, possibly none at all (discussed below).
 \end{remark}
 
-An NFA has input \(w = \sigma_1, \ldots, \sigma_k \in \Sigma^{\ast}\) while in state \(q_0\), reads \(\sigma\), then ``moves to'' all states in \(\delta\pqty{q_0, \sigma_1} \subseteq Q\). For each of these states, it reads \(\sigma_2\) and moves to all states in \(\delta\pqty{q, \sigma_2}\), so we are now at
+An NFA has input \(w = \sigma_1, \ldots, \sigma_k \in \Sigma\kstar\) while in state \(q_0\), reads \(\sigma\), then ``moves to'' all states in \(\delta\pqty{q_0, \sigma_1} \subseteq Q\). For each of these states, it reads \(\sigma_2\) and moves to all states in \(\delta\pqty{q, \sigma_2}\), so we are now at
 \[
     \bigcup_{p \in \delta\pqty{q_0, \sigma_1}} \delta\pqty{p, \sigma_2} \subseteq Q,
 \]
@@ -197,7 +197,7 @@ Given an NFA \(N\), we may define the transition diagram and table in the same w
     \label{def:extended-transition-function-nfa}%
     The \term{extended transition function} of an NFA \(N\) is given by
     \[
-        \functiondomain{\hat{\delta}}{Q \times \Sigma^{\ast}}{\powerset\pqty{Q}}
+        \functiondomain{\hat{\delta}}{Q \times \Sigma\kstar}{\powerset\pqty{Q}}
     \]
     defined inductively by
     \begin{itemize}
@@ -261,12 +261,12 @@ Now, we want to define how we process a word.
     But \(r \in \ecl\pqty{S}\), so there is some \(s \in S\) with length \(m\) sequence of \(\emptyword\)-transitions from \(s\) to \(r\). We put these together to get a sequence of \(\emptyword\)-transitions from \(s\) to \(x\), which means \(x \in S_{m + n} \pqty{s} \subseteq \ecl\pqty{s} \subseteq \ecl\pqty{S}\).
 \end{proof}
 
-An \(\emptyword\)-NFA has input \(w = \sigma_1 \cdots \sigma_k \in \Sigma^{\ast}\). From \(q_0\), it moves to all states in \(\ecl\pqty{q_0}\) and only then reads \(\sigma_1\). For each \(x \in \ecl\pqty{q_0}\), it takes the set of states \(\delta\pqty{x, \sigma_1}\), and for each \(y_x \in \delta\pqty{x, \sigma_1}\), it goes to \(\ecl\pqty{y_x}\), and the automaton is now in the set these states, union over all \(y_x\) over all such \(x\). We continue this until the word \(w\) is read, then \(w\) is accepted if any of the end states is an accept state, and rejected otherwise.
+An \(\emptyword\)-NFA has input \(w = \sigma_1 \cdots \sigma_k \in \Sigma\kstar\). From \(q_0\), it moves to all states in \(\ecl\pqty{q_0}\) and only then reads \(\sigma_1\). For each \(x \in \ecl\pqty{q_0}\), it takes the set of states \(\delta\pqty{x, \sigma_1}\), and for each \(y_x \in \delta\pqty{x, \sigma_1}\), it goes to \(\ecl\pqty{y_x}\), and the automaton is now in the set these states, union over all \(y_x\) over all such \(x\). We continue this until the word \(w\) is read, then \(w\) is accepted if any of the end states is an accept state, and rejected otherwise.
 
 \begin{definition}[Extended Transition Function (\(\emptyword\)-NFA)]
     The \term{extended transition function} of an \(\emptyword\)-NFA \(E\) is given by
     \[
-        \functiondomain{\hat{\delta}}{Q \times \Sigma^{\ast}}{\powerset\pqty{Q}}
+        \functiondomain{\hat{\delta}}{Q \times \Sigma\kstar}{\powerset\pqty{Q}}
     \]
     defined inductively by
     \begin{itemize}
@@ -300,7 +300,7 @@ Underlying all this is, however, languages. Any regular language is the language
 \begin{definition}[Language Accepted by NFA/\(\emptyword\)-NFA]
     Let \(N\) be an NFA (or an \(\emptyword\)-NFA). The \term{language accepted by \(N\)}, denoted by \(\langacc\pqty{N}\), is the set of all words accepted by \(N\), i.e.,
     \[
-        \langacc\pqty{N} = \set{w \in \Sigma^{\ast}}{\hat{\delta}\pqty{q_0, w} \cap F \neq \emptyset}.
+        \langacc\pqty{N} = \set{w \in \Sigma\kstar}{\hat{\delta}\pqty{q_0, w} \cap F \neq \emptyset}.
     \]
 \end{definition}
 
@@ -324,7 +324,7 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
 
 \begin{theorem}[Equivalence of Subset Construction]
     \label{thm:subset-construction-equivalence}%
-    For the NFA \(N\) and DFA \(D\) obtained from the subset construction as in \autoref{def:subset-construction}, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma^{\ast}\), we have
+    For the NFA \(N\) and DFA \(D\) obtained from the subset construction as in \autoref{def:subset-construction}, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma\kstar\), we have
     \[
         \hat{\Delta}\pqty{\Bqty{q_0}, w} = \hat{\delta}\pqty{q_0, w}.
     \]
@@ -383,7 +383,7 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
 \end{definition}
 
 \begin{theorem}[Equivalence of \(\emptyword\)-NFAs and DFAs]
-    For a given \(\emptyword\)-NFA \(E\) and the DFA \(D\) obtained from the subset construction with \(\emptyword\)-transitions as in \autoref{def:subset-construction-with-epsilon-transitions}, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma^{\ast}\), we have
+    For a given \(\emptyword\)-NFA \(E\) and the DFA \(D\) obtained from the subset construction with \(\emptyword\)-transitions as in \autoref{def:subset-construction-with-epsilon-transitions}, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma\kstar\), we have
     \[
         \hat{\Delta}\pqty{\ecl\pqty{q_0}, w} = \hat{\delta}\pqty{q_0, w}.
     \]
@@ -409,20 +409,20 @@ The natural question is, why bother? If they are all equivalent in terms of the 
         \item The \term{union} of two languages \(L\) and \(M\) over \(\Sigma_L\) and \(\Sigma_M\) respectively is the language \(L \cup M\) over the alphabet \(\Sigma_L \cup \Sigma_M\).
         \item The \term{concatanation} of two languages \(L\) and \(M\) over \(\Sigma_L\) and \(\Sigma_M\) respectively is the language
         \[
-            LM = \set{vw \in \pqty{\Sigma_L \cup \Sigma_M}^{\ast}}{v \in L, w \in M}.
+            LM = \set{vw \in \pqty{\Sigma_L \cup \Sigma_M}\kstar}{v \in L, w \in M}.
         \]
 
         (Clearly \(LM \neq ML\) in general.)
 
-        \item The \term{closure} \(L^{\ast}\) of a language \(L\) over \(\Sigma_L\) is the set of all words formed by concatenating zero or more words from \(L\) (not necessarily distinct), i.e.,
+        \item The \term{closure} \(L\kstar\) of a language \(L\) over \(\Sigma_L\) is the set of all words formed by concatenating zero or more words from \(L\) (not necessarily distinct), i.e.,
         \[
-            L^{\ast} = \bigcup_{k = 0}^{\infty} L^k \ni \emptyword.
+            L\kstar = \bigcup_{k = 0}^{\infty} L^k \ni \emptyword.
         \]
     \end{enumerate}
 \end{definition}
 
 \begin{remark}
-    For \(n \geq 2\), we can have \(L \nsubseteq L^n\), if \(\emptyword \notin L\), but this does not happen if \(\emptyword \in L\) (in which case \(L^n\) will be an increasing chain of sets). However, certainly we have \(L \subseteq L^{\ast}\).
+    For \(n \geq 2\), we can have \(L \nsubseteq L^n\), if \(\emptyword \notin L\), but this does not happen if \(\emptyword \in L\) (in which case \(L^n\) will be an increasing chain of sets). However, certainly we have \(L \subseteq L\kstar\).
 \end{remark}
 
 \begin{definition}[Regular Expressions]
@@ -430,12 +430,12 @@ The natural question is, why bother? If they are all equivalent in terms of the 
 
     \begin{enumerate}[label=(\arabic*)]
         \item Both \(\emptyword\) and \(\emptyset\) are regular expressions, with \(\langacc\pqty{\emptyword} = \Bqty{\emptyword}\) and \(\langacc\pqty{\emptyset} = \emptyset\).
-        \item If \(a\) is a symbol (but not \(\emptyword\), \(\emptyset\), \((\), \()\), \({}^{\ast}\), \(+\)), then \(a\) is a regular expression with \(\langacc\pqty{a} = \Bqty{a}\).
+        \item If \(a\) is a symbol (but not \(\emptyword\), \(\emptyset\), \((\), \()\), \({}\kstar\), \(+\)), then \(a\) is a regular expression with \(\langacc\pqty{a} = \Bqty{a}\).
         \item If \(E\) and \(F\) are regular expressions, then:
         \begin{itemize}
             \item \(E + F\) is a regular expression denoting the union, so \(\langacc\pqty{E + F} = \langacc\pqty{E} \cup \langacc\pqty{F}\).
             \item \(EF\) is a regular expression denoting the concatenation, so \(\langacc\pqty{EF} = \langacc\pqty{E}\langacc\pqty{F}\).
-            \item \(E^{\ast}\) is a regular expression denoting the closure, so \(\langacc\pqty{E^{\ast}} = \langacc\pqty{E}^{\ast}\).
+            \item \(E\kstar\) is a regular expression denoting the closure, so \(\langacc\pqty{E\kstar} = \langacc\pqty{E}\kstar\).
             \item \(\pqty{E}\) is a regular expression with the same language as \(E\), so \(\langacc\pqty{\pqty{E}} = \langacc\pqty{E}\).
         \end{itemize}
     \end{enumerate}
@@ -445,7 +445,7 @@ The natural question is, why bother? If they are all equivalent in terms of the 
     The order of precedence for regular expressions is as follows:
     \begin{enumerate}[label=(\arabic*)]
         \item \(\pqty{E}\) has the highest precedence.
-        \item \(^{\ast}\) has the next highest precedence.
+        \item \(\kstar\) has the next highest precedence.
         \item Concatenation has the next highest precedence.
         \item \(+\) has the lowest precedence.
     \end{enumerate}
@@ -453,9 +453,9 @@ The natural question is, why bother? If they are all equivalent in terms of the 
 
 \begin{examples*}
     \begin{itemize}
-        \item The regular expression \(0 1^{\ast} + 1\) is \(\pqty{0 \pqty{1^{\ast}}} + \pqty{1}\) is the union of the language \(\Bqty{0, 01, 011, 0111, \ldots}\) and the language \(\Bqty{1}\), which is \(\Bqty{0, 01, 011, 0111, \ldots, 1}\).
+        \item The regular expression \(0 1\kstar + 1\) is \(\pqty{0 \pqty{1\kstar}} + \pqty{1}\) is the union of the language \(\Bqty{0, 01, 011, 0111, \ldots}\) and the language \(\Bqty{1}\), which is \(\Bqty{0, 01, 011, 0111, \ldots, 1}\).
         \item The regular expression \(0 + 1\) accepts \(\Bqty{0, 1}\), \(0 + 0\) accepts \(\Bqty{0}\).
-        \item The regular expression \(\pqty{1 + \epsilon}\pqty{01}^{\ast} \pqty{0 + \epsilon}\) accepts all strings where \(0\) and \(1\) alternate, including the empty string.
+        \item The regular expression \(\pqty{1 + \epsilon}\pqty{01}\kstar \pqty{0 + \epsilon}\) accepts all strings where \(0\) and \(1\) alternate, including the empty string.
         \item The regular expression \(\pqty{0 + 1}^3\) are the eight words over \(\Bqty{0, 1}\) of length \(3\).
     \end{itemize}
 \end{examples*}
@@ -499,7 +499,7 @@ The natural question is, why bother? If they are all equivalent in terms of the 
             \end{tikzpicture}
         \end{center}
 
-        \item For the inductive step. suppose we have a regular expression \(R, S\) with \(\emptyword\)-NFAs \(E, F\), with \(\langacc\pqty{E} = \langacc\pqty{R}\) and \(\langacc\pqty{F} = \langacc\pqty{S}\). (We will denote this by a zig-zag arrow labelling \(R\) or \(S\).) Then we can construct \(\emptyword\)-NFAs for \(R + S\), \(RS\) and \(R^{\ast}\) as follows.
+        \item For the inductive step. suppose we have a regular expression \(R, S\) with \(\emptyword\)-NFAs \(E, F\), with \(\langacc\pqty{E} = \langacc\pqty{R}\) and \(\langacc\pqty{F} = \langacc\pqty{S}\). (We will denote this by a zig-zag arrow labelling \(R\) or \(S\).) Then we can construct \(\emptyword\)-NFAs for \(R + S\), \(RS\) and \(R\kstar\) as follows.
         \begin{itemize}
             \item An \(\emptyword\)-NFA for \(R + S\) is given by:
             
@@ -540,7 +540,7 @@ The natural question is, why bother? If they are all equivalent in terms of the 
                 \end{tikzpicture}
             \end{center}
 
-            \item An \(\emptyword\)-NFA for \(R^{\ast}\) is given by:
+            \item An \(\emptyword\)-NFA for \(R\kstar\) is given by:
             
             \begin{center}
                 \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=1.5cm,semithick,initial text=]
@@ -609,13 +609,13 @@ The natural question is, why bother? If they are all equivalent in terms of the 
 
         So the word read from \(\pi\) is in the language given by the regular expression
         \[
-            R_{ik}^{\pqty{k - 1}} \pqty{R_{kk}^{\pqty{k - 1}}}^{\ast} R_{kj}^{\pqty{k - 1}}.
+            R_{ik}^{\pqty{k - 1}} \pqty{R_{kk}^{\pqty{k - 1}}}\kstar R_{kj}^{\pqty{k - 1}}.
         \]
     \end{enumerate}
 
     Then for the two cases, we define
     \[
-        R_{ij}^{\pqty{k}} = R_{ij}^{\pqty{k - 1}} + R_{ik}^{\pqty{k - 1}} \pqty{R_{kk}^{\pqty{k - 1}}}^{\ast} R_{kj}^{\pqty{k - 1}}.
+        R_{ij}^{\pqty{k}} = R_{ij}^{\pqty{k - 1}} + R_{ik}^{\pqty{k - 1}} \pqty{R_{kk}^{\pqty{k - 1}}}\kstar R_{kj}^{\pqty{k - 1}}.
     \]
 
     Finally, if \(F = \Bqty{j_1, \ldots, j_s}\) (and the start state is \(1\)), then the language that \(D\) accepts is given by the regular expression
@@ -632,7 +632,7 @@ The natural question is, why bother? If they are all equivalent in terms of the 
     \begin{enumerate}[label=(\arabic*)]
         \item \(L \cup M\) over \(\Sigma_L \cup \Sigma_M\),
         \item \(LM\) over \(\Sigma_L \cup \Sigma_M\),
-        \item \(L^{\ast}\) over \(\Sigma_L\).
+        \item \(L\kstar\) over \(\Sigma_L\).
     \end{enumerate}
 \end{theorem}
 
@@ -641,16 +641,16 @@ The natural question is, why bother? If they are all equivalent in terms of the 
     \begin{enumerate}[label=(\arabic*)]
         \item \(R_L + R_M\) is a regular expression with \(\langacc\pqty{R_L + R_M} = L \cup M\).
         \item \(R_L R_M\) is a regular expression with \(\langacc\pqty{R_L R_M} = LM\).
-        \item \(R_L^{\ast}\) is a regular expression with \(\langacc\pqty{R_L^{\ast}} = L^{\ast}\).
+        \item \(R_L\kstar\) is a regular expression with \(\langacc\pqty{R_L\kstar} = L\kstar\).
     \end{enumerate}
 \end{proof}
 
 \begin{theorem}[Complement of Regular Languages]
-    Let \(L\) be a regular language over \(\Sigma\). Then the \term{complement} \(\overline{L} = \Sigma^{\ast} \setminus L\) is also a regular language.
+    Let \(L\) be a regular language over \(\Sigma\). Then the \term{complement} \(\overline{L} = \Sigma\kstar \setminus L\) is also a regular language.
 \end{theorem}
 
 \begin{proof}
-    Given a DFA \(D\) with \(L = \langacc\pqty{D}\), consider the DFA \(\overline{D}\) which is same as \(D\) but with accept spaces \(Q \setminus F\) (the non-accept states of \(D\)). Then for any \(w \in \Sigma^{\ast}\), we have
+    Given a DFA \(D\) with \(L = \langacc\pqty{D}\), consider the DFA \(\overline{D}\) which is same as \(D\) but with accept spaces \(Q \setminus F\) (the non-accept states of \(D\)). Then for any \(w \in \Sigma\kstar\), we have
     \[
         w \in \overline{L} \iff w \notin L \iff \hat{\delta} \pqty{q_0, w} \notin F \iff \hat{\delta} \pqty{q_0, w} \in Q \setminus F \iff w \in \langacc\pqty{\overline{D}}.
     \]
