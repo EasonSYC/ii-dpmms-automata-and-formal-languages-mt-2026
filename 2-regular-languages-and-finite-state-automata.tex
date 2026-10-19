@@ -322,9 +322,9 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
     (Intuitively, \(\Delta\) gives the subset of states reached from \(S\) by following an edge labelled \(\sigma\).)
 \end{definition}
 
-\begin{theorem}
+\begin{theorem}[Equivalence of Subset Construction]
     \label{thm:subset-construction-equivalence}%
-    For the NFA \(N\) and DFA \(D\) obtained from the subset construction, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma^{\ast}\), we have
+    For the NFA \(N\) and DFA \(D\) obtained from the subset construction as in \autoref{def:subset-construction}, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma^{\ast}\), we have
     \[
         \hat{\Delta}\pqty{\Bqty{q_0}, w} = \hat{\delta}\pqty{q_0, w}.
     \]
@@ -367,3 +367,337 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
     \]
     which is if and only if \(w\) is accepted by \(D\).
 \end{proof}
+
+\begin{definition}[Subset Construction with \(\emptyword\)-Transitions]
+    \label{def:subset-construction-with-epsilon-transitions}%
+    For the \(\emptyword\)-NFA \(E = \pqty{Q, \Sigma, \delta, q_0, F}\), the \term{subset construction with \(\emptyword\)-transitions} for \(E\) produces the DFA \(D = \pqty{\powerset\pqty{Q}, \Sigma, \Delta, \ecl\pqty{q_0}, \mathcal{F}}\), where the accept states are
+    \[
+        \mathcal{F} = \set{S \subseteq Q}{S \cap F \neq \emptyset},
+    \]
+    as before, and for \(S \subseteq Q, \sigma \in \Sigma\), we define
+    \[
+        \Delta\pqty{S, \sigma} = \ecl\pqty{\bigcup_{q \in S} \delta\pqty{q, \sigma}}.
+    \]
+
+    (Intuitively, \(\Delta\) gives the subset of states reached from \(S\) by following an edge labelled \(\sigma\), and then taking all possible \(\emptyword\)-transitions.)
+\end{definition}
+
+\begin{theorem}[Equivalence of \(\emptyword\)-NFAs and DFAs]
+    For a given \(\emptyword\)-NFA \(E\) and the DFA \(D\) obtained from the subset construction with \(\emptyword\)-transitions as in \autoref{def:subset-construction-with-epsilon-transitions}, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma^{\ast}\), we have
+    \[
+        \hat{\Delta}\pqty{\ecl\pqty{q_0}, w} = \hat{\delta}\pqty{q_0, w}.
+    \]
+\end{theorem}
+
+\begin{proof}
+    The proof is near-identical to the proof of \autoref{thm:subset-construction-equivalence}. In particular, for the induction step, we start with \(\hat{\delta}\pqty{q_0, w}\) and apply \autoref{def:extended-transition-function-nfa}, \autoref{def:extended-transition-function-dfa}, the induction hypothesis, and \autoref{def:extended-transition-function-dfa}, eventually reaching \(\hat{\Delta}\pqty{\ecl\pqty{q_0}, w}\).
+\end{proof}
+
+\begin{corollary}[Equivalence of DFAs, NFAs and \(\emptyword\)-NFAs]
+    \label{cor:equivalence-of-dfas-nfas-and-epsilon-nfas}%
+    A language \(L\) is accepted by some DFA, if and only if it is accepted by some NFA, if and only if it is accepted by some \(\emptyword\)-NFA.
+\end{corollary}
+
+\subsection{Regular Expressions}
+
+The natural question is, why bother? If they are all equivalent in terms of the languages they accept, why do we need to consider NFAs and \(\emptyword\)-NFAs? We now give an algebraic/symbolic description of a regular language, which is known as a \term{regular expression}. We will then show the set of languages defined by DFAs is the same as the set of languages defined by regular expressions, and hence the set of languages defined by (\(\emptyword\)-)NFAs, and they are all equivalent.
+
+\begin{definition}[New Languages from Old Languages]
+    We define the following.
+
+    \begin{enumerate}[label=(\arabic*)]
+        \item The \term{union} of two languages \(L\) and \(M\) over \(\Sigma_L\) and \(\Sigma_M\) respectively is the language \(L \cup M\) over the alphabet \(\Sigma_L \cup \Sigma_M\).
+        \item The \term{concatanation} of two languages \(L\) and \(M\) over \(\Sigma_L\) and \(\Sigma_M\) respectively is the language
+        \[
+            LM = \set{vw \in \pqty{\Sigma_L \cup \Sigma_M}^{\ast}}{v \in L, w \in M}.
+        \]
+
+        (Clearly \(LM \neq ML\) in general.)
+
+        \item The \term{closure} \(L^{\ast}\) of a language \(L\) over \(\Sigma_L\) is the set of all words formed by concatenating zero or more words from \(L\) (not necessarily distinct), i.e.,
+        \[
+            L^{\ast} = \bigcup_{k = 0}^{\infty} L^k \ni \emptyword.
+        \]
+    \end{enumerate}
+\end{definition}
+
+\begin{remark}
+    For \(n \geq 2\), we can have \(L \nsubseteq L^n\), if \(\emptyword \notin L\), but this does not happen if \(\emptyword \in L\) (in which case \(L^n\) will be an increasing chain of sets). However, certainly we have \(L \subseteq L^{\ast}\).
+\end{remark}
+
+\begin{definition}[Regular Expressions]
+    A \term{regular expression} \(R\) is a finite string of symbols denoting a language \(\langacc\pqty{R}\) over some alphabet, built up from the following inductive rules.
+
+    \begin{enumerate}[label=(\arabic*)]
+        \item Both \(\emptyword\) and \(\emptyset\) are regular expressions, with \(\langacc\pqty{\emptyword} = \Bqty{\emptyword}\) and \(\langacc\pqty{\emptyset} = \emptyset\).
+        \item If \(a\) is a symbol (but not \(\emptyword\), \(\emptyset\), \((\), \()\), \({}^{\ast}\), \(+\)), then \(a\) is a regular expression with \(\langacc\pqty{a} = \Bqty{a}\).
+        \item If \(E\) and \(F\) are regular expressions, then:
+        \begin{itemize}
+            \item \(E + F\) is a regular expression denoting the union, so \(\langacc\pqty{E + F} = \langacc\pqty{E} \cup \langacc\pqty{F}\).
+            \item \(EF\) is a regular expression denoting the concatenation, so \(\langacc\pqty{EF} = \langacc\pqty{E}\langacc\pqty{F}\).
+            \item \(E^{\ast}\) is a regular expression denoting the closure, so \(\langacc\pqty{E^{\ast}} = \langacc\pqty{E}^{\ast}\).
+            \item \(\pqty{E}\) is a regular expression with the same language as \(E\), so \(\langacc\pqty{\pqty{E}} = \langacc\pqty{E}\).
+        \end{itemize}
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}[Order of Precedence for Regular Expressions]
+    The order of precedence for regular expressions is as follows:
+    \begin{enumerate}[label=(\arabic*)]
+        \item \(\pqty{E}\) has the highest precedence.
+        \item \(^{\ast}\) has the next highest precedence.
+        \item Concatenation has the next highest precedence.
+        \item \(+\) has the lowest precedence.
+    \end{enumerate}
+\end{definition}
+
+\begin{examples*}
+    \begin{itemize}
+        \item The regular expression \(0 1^{\ast} + 1\) is \(\pqty{0 \pqty{1^{\ast}}} + \pqty{1}\) is the union of the language \(\Bqty{0, 01, 011, 0111, \ldots}\) and the language \(\Bqty{1}\), which is \(\Bqty{0, 01, 011, 0111, \ldots, 1}\).
+        \item The regular expression \(0 + 1\) accepts \(\Bqty{0, 1}\), \(0 + 0\) accepts \(\Bqty{0}\).
+        \item The regular expression \(\pqty{1 + \epsilon}\pqty{01}^{\ast} \pqty{0 + \epsilon}\) accepts all strings where \(0\) and \(1\) alternate, including the empty string.
+        \item The regular expression \(\pqty{0 + 1}^3\) are the eight words over \(\Bqty{0, 1}\) of length \(3\).
+    \end{itemize}
+\end{examples*}
+
+\subsection{Regular Expressions define Regular Languages}
+
+\begin{theorem}[Regular Expressions define \(\emptyword\)-NFAs]
+    For any regular expression \(R\), there exists a \(\emptyword\)-NFA \(E\) such that \(\langacc\pqty{R} = \langacc\pqty{E}\).
+\end{theorem}
+
+
+\begin{proof}
+    We build \(E\) up by induction. All \(\emptyword\)-NFAs constructed will be such that:
+    \begin{itemize}
+        \item there is a \emph{unique} accepting state,
+        \item there is no directed edges into the start state, and
+        \item there is no directed edges out of accepting state.
+    \end{itemize}
+
+    Then we construct \(\emptyword\)-NFAs inductively as follows.
+
+    \begin{enumerate}[label=(\arabic*)]
+        \item For the base case, we have the following \(\emptyword\)-NFAs for the regular expressions \(\emptyset\), \(\emptyword\) and \(a\):
+        
+        \begin{center}
+            \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=1cm,semithick,initial text=]
+                \node[state, initial] (q0)  {};
+                \node[state, accepting] (q1)  [right=of q0] {};
+            \end{tikzpicture}
+            \hspace{1cm}
+            \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=1cm,semithick,initial text=]
+                \node[state, initial] (q0)  {};
+                \node[state, accepting] (q1)  [right=of q0] {};
+                \path (q0) edge node {\(\emptyword\)} (q1);
+            \end{tikzpicture}
+            \hspace{1cm}
+            \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=1cm,semithick,initial text=]
+                \node[state, initial] (q0)  {};
+                \node[state, accepting] (q1)  [right=of q0] {};
+                \path (q0) edge node {\(a\)} (q1);
+            \end{tikzpicture}
+        \end{center}
+
+        \item For the inductive step. suppose we have a regular expression \(R, S\) with \(\emptyword\)-NFAs \(E, F\), with \(\langacc\pqty{E} = \langacc\pqty{R}\) and \(\langacc\pqty{F} = \langacc\pqty{S}\). (We will denote this by a zig-zag arrow labelling \(R\) or \(S\).) Then we can construct \(\emptyword\)-NFAs for \(R + S\), \(RS\) and \(R^{\ast}\) as follows.
+        \begin{itemize}
+            \item An \(\emptyword\)-NFA for \(R + S\) is given by:
+            
+            \begin{center}
+                \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=1.5cm,semithick,initial text=]
+                    \node[state, initial] (q0) {};
+                    \node[state] (r0)  [above right=of q0] {};
+                    \node[state] (r1)  [right=of r0] {};
+                    \node[state] (s0)  [below right=of q0] {};
+                    \node[state] (s1)  [right=of s0] {};
+                    \node[state, accepting] (q1)  [below right=of r1] {};
+                    \path (q0) edge node {\(\emptyword\)} (r0)
+                        (q0) edge node[swap] {\(\emptyword\)} (s0)
+                        (r0) edge[zigzag edge] node {\(R\)} (r1)
+                        (s0) edge[zigzag edge] node[swap] {\(S\)} (s1)
+                        (r1) edge node {\(\emptyword\)} (q1)
+                        (s1) edge node[swap] {\(\emptyword\)} (q1);
+                \end{tikzpicture}
+            \end{center}
+
+            If a word is input, then it can move through the first \(\emptyword\)s, but can only get through if and only if it is in either \(\langacc\pqty{R}\) or \(\langacc\pqty{S}\).
+
+            \item An \(\emptyword\)-NFA for \(RS\) is given by:
+            
+            \begin{center}
+                \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=1.5cm,semithick,initial text=]
+                    \node[state, initial] (q0)  {};
+                    \node[state] (r0)  [right=of q0] {};
+                    \node[state] (r1)  [right=of r0] {};
+                    \node[state] (s0)  [right=of r1] {};
+                    \node[state] (s1)  [right=of s0] {};
+                    \node[state, accepting] (q1)  [right=of s1] {};
+                    \path (q0) edge node {\(\emptyword\)} (r0)
+                        (r0) edge[zigzag edge] node {\(R\)} (r1)
+                        (r1) edge node {\(\emptyword\)} (s0)
+                        (s0) edge[zigzag edge] node {\(S\)} (s1)
+                        (s1) edge node {\(\emptyword\)} (q1);
+                \end{tikzpicture}
+            \end{center}
+
+            \item An \(\emptyword\)-NFA for \(R^{\ast}\) is given by:
+            
+            \begin{center}
+                \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=1.5cm,semithick,initial text=]
+                    \node[state, initial] (q0)  {};
+                    \node[state] (r0)  [right=of q0] {};
+                    \node[state] (r1)  [right=of r0] {};
+                    \node[state, accepting] (q1)  [right=of r1] {};
+                    \path (q0) edge node {\(\emptyword\)} (r0)
+                        (q0) edge [bend left=30] node {\(\emptyword\)} (q1)
+                        (r0) edge[zigzag edge] node {\(R\)} (r1)
+                        (r1) edge node {\(\emptyword\)} (q1)
+                        (r1) edge [bend left=30] node {\(\emptyword\)} (r0);
+                \end{tikzpicture}
+            \end{center}
+        \end{itemize}
+    \end{enumerate}
+\end{proof}
+
+\begin{theorem}[DFAs define Regular Expressions]
+    For any DFA \(D\), there exists a regular expression \(R\) such that \(\langacc\pqty{D} = \langacc\pqty{R}\).
+\end{theorem}
+
+\begin{proof}
+    Given \(D = \pqty{Q, \Sigma, \delta, q_0, F}\), label the states by \(Q = \Bqty{1, 2, \ldots, n}\), and say the start state \(q_0\) is labelled by \(1\). Now, given two states \(1 \leq i, j \leq n\) and \(0 \leq k \leq n\) inclusive, we construct by induction on \(k\) a regular expression \(R_{ij}^{\pqty{k}}\), consisting of exactly the words \(w\) over \(\Sigma\) that begin at state \(i\) and end at state \(j\), and such that all the intermediate states passed through (excluding the endpoints) are labelled by numbers at most \(k\). In other words, we think of a given word \(w\) as a directed path from \(i\) to \(j\).
+
+    For \(k = 0\), this does not allow for any intermediate states, and we have to go directly from \(i\) to \(j\). So we let \(\Bqty{a_1, \ldots, a_l}\) be all the symbols that label an edge from \(i\) to \(j\) (if there are no such edges, then \(l = 0\)), and we set
+    \[
+        R_{ij}^{\pqty{0}} = \begin{cases}
+            a_1 + \cdots + a_l, & l > 0,\\
+            \emptyset, & l = 0.
+        \end{cases}
+    \]
+    if \(i \neq j\), and if \(i = j\), let 
+    \[
+        R_{ii}^{\pqty{0}} = \begin{cases}
+            a_1 + \cdots + a_l + \emptyword, & l > 0,\\
+            \emptyword, & l = 0.
+        \end{cases}
+    \]
+    using \(\emptyword\) for no move.
+
+    Suppose now that \(R_{ij}^{\pqty{t}}\) is defined for all \(t < k\). Given a path \(\pi\) from \(i\) to \(j\) not passing through the stats \(k + 1, \ldots, n\). Either:
+    \begin{enumerate}
+        \item The path \(\pi\) does not pass through state \(k\) either. Then \(\pi\) is accepted by the regular expression \(R_{ij}^{\pqty{k - 1}}\).
+        \item The path \(\pi\) passes through \(k\) various times, so we split the path as
+        \[
+            \pi = \sigma \pi_1 \pi_2 \ldots \pi_r \omega
+        \]
+        where \(\sigma\) brings us from \(i\) to \(k\) without passing through \(k\), \(\pi_1, \ldots, \pi_r\) are paths from \(k\) to \(k\) without passing through \(k\), and \(\omega\) is a path from \(k\) to \(j\) without passing through \(k\).
+
+        \begin{center}
+            \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+                \node[state] (i) {\(i\)};
+                \node[state] (k) [right of=i] {\(k\)};
+                \node[state] (j) [right of=k] {\(j\)};
+
+                \path[->]
+                    (i) edge node {\(\sigma\)} (k)
+                    (k) edge node {\(\omega\)} (j)
+                        edge[loop above] node {\(\pi_1\)} ()
+                        edge[loop below] node {\(\pi_2\)} ();
+            \end{tikzpicture}
+        \end{center}
+
+        We know \(\sigma \in \langacc\pqty{R_{ik}^{\pqty{k - 1}}}\), and \(\pi_1, \ldots, \pi_r \in \langacc\pqty{R_{kk}^{\pqty{k - 1}}}\), and \(\omega \in \langacc\pqty{R_{kj}^{\pqty{k - 1}}}\).
+
+        So the word read from \(\pi\) is in the language given by the regular expression
+        \[
+            R_{ik}^{\pqty{k - 1}} \pqty{R_{kk}^{\pqty{k - 1}}}^{\ast} R_{kj}^{\pqty{k - 1}}.
+        \]
+    \end{enumerate}
+
+    Then for the two cases, we define
+    \[
+        R_{ij}^{\pqty{k}} = R_{ij}^{\pqty{k - 1}} + R_{ik}^{\pqty{k - 1}} \pqty{R_{kk}^{\pqty{k - 1}}}^{\ast} R_{kj}^{\pqty{k - 1}}.
+    \]
+
+    Finally, if \(F = \Bqty{j_1, \ldots, j_s}\) (and the start state is \(1\)), then the language that \(D\) accepts is given by the regular expression
+    \[
+        R = R_{1 j_1}^{\pqty{n}} + \cdots + R_{1 j_s}^{\pqty{n}},
+    \]
+    with \(\langacc\pqty{D} = \langacc\pqty{R}\). This finishes the construction as desired.
+\end{proof}
+
+\subsection{Closure Properties}
+
+\begin{theorem}[Closure Properties of Regular Languages]
+    Let \(L, M\) be regular languages over \(\Sigma_L\) and \(\Sigma_M\) respectively. Then the following are also regular languages:
+    \begin{enumerate}[label=(\arabic*)]
+        \item \(L \cup M\) over \(\Sigma_L \cup \Sigma_M\),
+        \item \(LM\) over \(\Sigma_L \cup \Sigma_M\),
+        \item \(L^{\ast}\) over \(\Sigma_L\).
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+    We consider regular expressions \(R_L\) and \(R_M\) so \(\langacc\pqty{R_K} = L\) and \(\langacc\pqty{R_M} = M\). Then we have
+    \begin{enumerate}[label=(\arabic*)]
+        \item \(R_L + R_M\) is a regular expression with \(\langacc\pqty{R_L + R_M} = L \cup M\).
+        \item \(R_L R_M\) is a regular expression with \(\langacc\pqty{R_L R_M} = LM\).
+        \item \(R_L^{\ast}\) is a regular expression with \(\langacc\pqty{R_L^{\ast}} = L^{\ast}\).
+    \end{enumerate}
+\end{proof}
+
+\begin{theorem}[Complement of Regular Languages]
+    Let \(L\) be a regular language over \(\Sigma\). Then the \term{complement} \(\overline{L} = \Sigma^{\ast} \setminus L\) is also a regular language.
+\end{theorem}
+
+\begin{proof}
+    Given a DFA \(D\) with \(L = \langacc\pqty{D}\), consider the DFA \(\overline{D}\) which is same as \(D\) but with accept spaces \(Q \setminus F\) (the non-accept states of \(D\)). Then for any \(w \in \Sigma^{\ast}\), we have
+    \[
+        w \in \overline{L} \iff w \notin L \iff \hat{\delta} \pqty{q_0, w} \notin F \iff \hat{\delta} \pqty{q_0, w} \in Q \setminus F \iff w \in \langacc\pqty{\overline{D}}.
+    \]
+    as the extended transition function is the same for both \(D\) and \(\overline{D}\).
+\end{proof}
+
+\begin{corollary}[Intersection of Regular Languages]
+    If \(L, M\) are regular languages over \(\Sigma_L\) and \(\Sigma_M\) respectively, then the intersection \(L \cap M\) is also a regular language over \(\Sigma_L \cap \Sigma_M\).
+\end{corollary}
+
+\begin{proof}
+    We notice that
+    \[
+        L \cap M = \overline{\overline{L} \cup \overline{M}}.
+    \]
+\end{proof}
+
+\subsection{The Pumping Lemma}
+
+How do we show a given language is \emph{not} regular? Clearly,
+\begin{itemize}
+    \item any finite language is regular;
+    \item as \(\Sigma^n\) is a finite set, so if \(L\) is infinite then there is some \(w \in L\) such that \(\abs{w} > n\).
+\end{itemize}
+
+Suppose a word \(w\) is accepted by a DFA \(D\) but \(\abs{w} \geq \abs{Q}\), i.e. \(w\) has no fewer symbols than \(D\) has states. Then \(w\) defines a directed path in the transition diagram \(\Gamma_D\), which must visit some state at least twice. So we can write
+\[
+    w = xyz
+\]
+for subwords \(x, y\) and \(z\), where \(y\) gives us the ``loop'' and  then go around the loop again, or not at all.
+
+\begin{theorem}[Pumping Lemma for Regular Languages]
+    \label{thm:pumping-lemma-for-regular-languages}%
+    If \(L\) is a regular language, then there exists a constant \(n \geq 1\) (a \term{pumping number}) such that for any word \(w \in L\) with \(\abs{w} \geq n\), we can write
+    \[
+        w = xyz
+    \]
+    for subwords \(x, y, z\) such that
+    \begin{enumerate}[label=(\arabic*)]
+        \item \(y \neq \emptyword\) (although \(x\) and \(z\) could be),
+        \item \(\abs{xy} \leq n\), and
+        \item \(xy^k z \in L\) for all \(k \geq 0\).
+    \end{enumerate}
+
+    Note \(k = 1\) retrieves \(w\), \(k = 0\) is \term{pumping down}, and \(k \geq 2\) is \term{pumping up}.
+\end{theorem}
+
+\begin{remark}
+    The morale is, we can keep repeating (pumping) appearances of \(y\) in a regular language -- but not all languages have this property, and to show that a language is not regular, it would be useful to show that a language does not have this property.
+\end{remark}
