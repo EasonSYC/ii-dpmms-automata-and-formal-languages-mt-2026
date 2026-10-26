@@ -104,27 +104,28 @@ We will see a countable class of languages, where we can do this not via natural
     \]
     defined inductively by
     \begin{itemize}
-        \item \(\hat{\delta} \pqty{q, \epsilon} = q\),
+        \item \(\hat{\delta} \pqty{q, \emptyword} = q\),
         \item \(\hat{\delta} \pqty{q, \sigma_1} = \delta(q, \sigma_1)\), and
-        \item \(\hat{\delta} \pqty{q, \sigma_1 \ldots \sigma_k} = \delta \pqty{\hat{\delta} \pqty{q, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k}\).
+        \item \(\hat{\delta} \pqty{q, \sigma_1 \cdots \sigma_k} = \delta \pqty{\hat{\delta} \pqty{q, \sigma_1 \cdots \sigma_{k - 1}}, \sigma_k}\).
     \end{itemize}
 \end{definition}
 
 For any \(w \in \Sigma\kstar\), we have \(\hat{\delta}\pqty{q_0, w}\) is the end state of an input \(w\).
 
 \begin{lemma}[Transitivity of Extended Transition Function]
+    \label{lem:transitivity-of-extended-transition-function}%
     For all \(1 \leq l \leq k\), we have
     \[
-        \hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_k} = \hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_l}, \sigma_{l + 1} \ldots \sigma_k}.
+        \hat{\delta}\pqty{q, \sigma_1 \cdots \sigma_k} = \hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \cdots \sigma_l}, \sigma_{l + 1} \cdots \sigma_k}.
     \]
 \end{lemma}
 
 \begin{proof}
     We may show by induction on \(k\). Base case \(k = 1\) is trivial. Suppose the result holds for \(k - 1\). Then
     \begin{align*}
-        \hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_k} &= \delta\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k} \\
-        &= \delta\pqty{\hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_l}, \sigma_{l + 1} \ldots \sigma_{k - 1}}, \sigma_k} \\
-        &= \hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_l}, \sigma_{l + 1} \ldots \sigma_k}.
+        \hat{\delta}\pqty{q, \sigma_1 \cdots \sigma_k} &= \delta\pqty{\hat{\delta}\pqty{q, \sigma_1 \cdots \sigma_{k - 1}}, \sigma_k} \\
+        &= \delta\pqty{\hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \cdots \sigma_l}, \sigma_{l + 1} \cdots \sigma_{k - 1}}, \sigma_k} \\
+        &= \hat{\delta}\pqty{\hat{\delta}\pqty{q, \sigma_1 \cdots \sigma_l}, \sigma_{l + 1} \cdots \sigma_k}.
     \end{align*}
 \end{proof}
 
@@ -153,7 +154,7 @@ We now examine a (seemingly) more general construction, where we can choose whic
     Note the difference of a NFA from a DFA is that the transition function \(\delta\) now maps to a \emph{set of states}, rather than a single state. This means that, for a given state and input symbol, the NFA can transition to a number of possible next states, possibly none at all (discussed below).
 \end{remark}
 
-An NFA has input \(w = \sigma_1, \ldots, \sigma_k \in \Sigma\kstar\) while in state \(q_0\), reads \(\sigma\), then ``moves to'' all states in \(\delta\pqty{q_0, \sigma_1} \subseteq Q\). For each of these states, it reads \(\sigma_2\) and moves to all states in \(\delta\pqty{q, \sigma_2}\), so we are now at
+An NFA has input \(w = \sigma_1 \cdots \sigma_k \in \Sigma\kstar\) while in state \(q_0\), reads \(\sigma\), then ``moves to'' all states in \(\delta\pqty{q_0, \sigma_1} \subseteq Q\). For each of these states, it reads \(\sigma_2\) and moves to all states in \(\delta\pqty{q, \sigma_2}\), so we are now at
 \[
     \bigcup_{p \in \delta\pqty{q_0, \sigma_1}} \delta\pqty{p, \sigma_2} \subseteq Q,
 \]
@@ -201,11 +202,11 @@ Given an NFA \(N\), we may define the transition diagram and table in the same w
     \]
     defined inductively by
     \begin{itemize}
-        \item \(\hat{\delta} \pqty{q, \epsilon} = \Bqty{q}\),
+        \item \(\hat{\delta} \pqty{q, \emptyword} = \Bqty{q}\),
         \item \(\hat{\delta} \pqty{q, \sigma_1} = \delta(q, \sigma_1)\), and
         \item the inductive step
         \[
-        \hat{\delta} \pqty{q, \sigma_1 \ldots \sigma_k} = \bigcup_{p \in \hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k}.
+        \hat{\delta} \pqty{q, \sigma_1 \cdots \sigma_k} = \bigcup_{p \in \hat{\delta}\pqty{q, \sigma_1 \cdots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k}.
         \]
     \end{itemize}
 \end{definition}
@@ -270,7 +271,7 @@ An \(\emptyword\)-NFA has input \(w = \sigma_1 \cdots \sigma_k \in \Sigma\kstar\
     \]
     defined inductively by
     \begin{itemize}
-        \item the empty word \(\hat{\delta} \pqty{q, \epsilon} = \ecl\pqty{q}\),
+        \item the empty word \(\hat{\delta} \pqty{q, \emptyword} = \ecl\pqty{q}\),
         \item a one-character word
         \[
             \hat{\delta} \pqty{q, \sigma} = \ecl\pqty{\bigcup_{p \in \ecl\pqty{q}} \delta\pqty{p, \sigma}},
@@ -338,14 +339,14 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
 
     Now, suppose that
     \[
-        \hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \ldots \sigma_{k - 1}} = \hat{\delta}\pqty{q_0, \sigma_1 \ldots \sigma_{k - 1}}.
+        \hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \cdots \sigma_{k - 1}} = \hat{\delta}\pqty{q_0, \sigma_1 \cdots \sigma_{k - 1}}.
     \]
 
-    Then, for \(w = \sigma_1 \ldots \sigma_{k - 1} \sigma_k\), we have
+    Then, for \(w = \sigma_1 \cdots \sigma_{k - 1} \sigma_k\), we have
     \begin{align*}
-        \hat{\delta} \pqty{q_0, w} &= \bigcup_{p \in \hat{\delta}\pqty{q_0, \sigma_1 \ldots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k} && \text{by \autoref{def:extended-transition-function-nfa}}\\
-        &= \Delta \pqty{\hat{\delta} \pqty{q_0, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k} && \text{by \autoref{def:subset-construction}}\\
-        &= \Delta \pqty{\hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k} && \text{by Induction Hypothesis} \\
+        \hat{\delta} \pqty{q_0, w} &= \bigcup_{p \in \hat{\delta}\pqty{q_0, \sigma_1 \cdots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k} && \text{by \autoref{def:extended-transition-function-nfa}}\\
+        &= \Delta \pqty{\hat{\delta} \pqty{q_0, \sigma_1 \cdots \sigma_{k - 1}}, \sigma_k} && \text{by \autoref{def:subset-construction}}\\
+        &= \Delta \pqty{\hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \cdots \sigma_{k - 1}}, \sigma_k} && \text{by Induction Hypothesis} \\
         &= \hat{\Delta} \pqty{\Bqty{q_0}, w}. && \text{by \autoref{def:extended-transition-function-dfa}}
     \end{align*}
 \end{proof}
@@ -455,7 +456,7 @@ The natural question is, why bother? If they are all equivalent in terms of the 
     \begin{itemize}
         \item The regular expression \(0 1\kstar + 1\) is \(\pqty{0 \pqty{1\kstar}} + \pqty{1}\) is the union of the language \(\Bqty{0, 01, 011, 0111, \ldots}\) and the language \(\Bqty{1}\), which is \(\Bqty{0, 01, 011, 0111, \ldots, 1}\).
         \item The regular expression \(0 + 1\) accepts \(\Bqty{0, 1}\), \(0 + 0\) accepts \(\Bqty{0}\).
-        \item The regular expression \(\pqty{1 + \epsilon}\pqty{01}\kstar \pqty{0 + \epsilon}\) accepts all strings where \(0\) and \(1\) alternate, including the empty string.
+        \item The regular expression \(\pqty{1 + \emptyword}\pqty{01}\kstar \pqty{0 + \emptyword}\) accepts all strings where \(0\) and \(1\) alternate, including the empty string.
         \item The regular expression \(\pqty{0 + 1}^3\) are the eight words over \(\Bqty{0, 1}\) of length \(3\).
     \end{itemize}
 \end{examples*}
@@ -587,7 +588,7 @@ The natural question is, why bother? If they are all equivalent in terms of the 
         \item The path \(\pi\) does not pass through state \(k\) either. Then \(\pi\) is accepted by the regular expression \(R_{ij}^{\pqty{k - 1}}\).
         \item The path \(\pi\) passes through \(k\) various times, so we split the path as
         \[
-            \pi = \sigma \pi_1 \pi_2 \ldots \pi_r \omega
+            \pi = \sigma \pi_1 \pi_2 \cdots \pi_r \omega
         \]
         where \(\sigma\) brings us from \(i\) to \(k\) without passing through \(k\), \(\pi_1, \ldots, \pi_r\) are paths from \(k\) to \(k\) without passing through \(k\), and \(\omega\) is a path from \(k\) to \(j\) without passing through \(k\).
 
@@ -701,3 +702,318 @@ for subwords \(x, y\) and \(z\), where \(y\) gives us the ``loop'' and  then go 
 \begin{remark}
     The morale is, we can keep repeating (pumping) appearances of \(y\) in a regular language -- but not all languages have this property, and to show that a language is not regular, it would be useful to show that a language does not have this property.
 \end{remark}
+
+\begin{proof}
+    We let \(D = (Q, \Sigma, \delta, q_0, F)\) be a DFA with \(L = \langacc\pqty{D}\), and set \(n = \abs{Q}\). Now, take an accepted word \(w \in L\), and suppose
+    \[
+        w = \sigma_1 \cdots \sigma_m
+    \]
+    where \(m \geq n\). Let the states visited by \(w\) be
+    \[
+        p_i = \hat{\delta} \pqty{q_0, \sigma_1 \cdots \sigma_i}
+    \]
+    after reading the first \(i\) symbols of \(w\), where \(0 \leq i \leq m\).
+
+    By the pigeonhole principle, we have some \(0 \leq l < r \leq n\) with \(p_l = p_r\). So wet
+    \[
+        x = \sigma_1 \cdots \sigma_l, \quad y = \sigma_{l + 1} \cdots \sigma_r, \quad z = \sigma_{r + 1} \cdots \sigma_m,
+    \]
+    then \(w = xyz\), where \(y \neq \emptyword\) (we allow for \(x\) and \(z\) to be empty), and \(\abs{xy} = r \leq n\).
+
+    \begin{center}
+        \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+            \node[state] (q0) [initial] {\(q_0\)};
+            \node[state] (qi) [right of=q0] {\(q_i\)};
+            \node[state] (qf) [right of=qi, accepting] {};
+
+            \path[->]
+                (q0) edge node {\(x\)} (qi)
+                (qi) edge node {\(z\)} (qf)
+                    edge[loop above] node {\(y\)} ()
+                    edge[loop below] node {\(y\)} ();
+        \end{tikzpicture}
+    \end{center}
+
+    So for any \(k \geq 0\), we input \(x y^k z\) into \(D\), and they must be accepted, since we can go around the loop \(k\) times and then continue to the accepting state. Hence \(xy^k z \in L\) for all \(k \geq 0\).
+\end{proof}
+
+\begin{examples*}
+    \begin{enumerate}[label=(\alph*)]
+        \item If \(L\) is regular and infinite, then by \autoref{thm:pumping-lemma-for-regular-languages}, then this applies to some word \(w \in L\), so the size of the words in this language
+        \[
+            \set{\abs{w}}{w \in L}
+        \]
+        must contain an infinite arithmetic progression.
+        \item The language
+        \[
+            L_0 = \set{\pqty{01}^i}{i \geq 0}
+        \]
+        is regular for regular expression \(\pqty{01}\kstar\). However, the language
+        \[
+            L_1 = \set{0^i 1^i}{i \geq 0}
+        \]
+        is \emph{not regular}. Intuitively, this is because we need to ``count'' the number of \(0\)s and \(1\)s, which a DFA cannot do -- it does not have memory.
+
+        If so, we may take \(w = 0^n 1^n \in L_1\) for the pumping language \(n\), and write \(w = xyz\), so \(xy = 0^m\), and \(y = 0^l\) for some \(0 < l \leq m \leq n\).
+
+        By pumping down, \(xz = 0^{n - l} 1^n \notin L_1\), which is a contradiction. Hence \(L_1\) is not regular.
+
+        Similarly, if we pump up, we have \(x y^2 z = 0^{n + l} 1^n \notin L_1\), which is also a contradiction.
+
+        \item In particular, this method works identically for
+        \[
+            L_2 = \set{w}{w\text{ constains the same number of 0s and 1s}},
+        \]
+        since \(L_1 \subseteq L_2\).
+
+        But this is identical to the language of words \(\Bqty{w \text{ representing the identity}}\) for \(G = \ZZ = \angBrac{x}\) with \(X = x\inverse\), and \(\Sigma = \Bqty{x, X}\). So the language of words representing the identity in \(\ZZ\) is not regular.
+   \end{enumerate}
+\end{examples*}
+
+\small
+
+The following is a very nice, non-examinable result relating to group theory.
+
+\begin{theorem}[Anisimov's Theorem]
+    \label{thm:anisimov-theorem}%
+    Let \(G\) be a finitely generated group with finite generating set \(\Bqty{x_1, \ldots, x_n}\) with formal inverses \(X_i\), and the alphabet
+    \[
+        \Sigma = \Bqty{x_1, \ldots, x_n, X_1, \ldots, X_n}.
+    \]
+
+    Define \term{the language of the group}
+    \[
+        \langacc\pqty{G} = \set{w \in \Sigma\kstar}{w\text{ represents the identity in }G}.
+    \]
+
+    Then the language \(\langacc\pqty{G}\) is regular if and only if \(G\) is finite.
+\end{theorem}
+
+\begin{proof}
+    Given any element \(g \in G\), we have infinitely many words \(w \in \Sigma\kstar\) with \(w = g\) in \(G\), but the minimal length
+    \[
+        \abs{g} = \min\set{\abs{w}}{w = g\text{ in }G}
+    \]
+    always exists.
+
+    Suppose \(G\) is infinite, so \(\set{\abs{g}}{g \in G}\) is unbounded. If a DFA \(D\) accepts \(\langacc\pqty{G}\), then take \(g\) with \(\abs{g} \geq \abs{Q}\), and a minimal length word \(w\) for \(g\). So let
+    \[
+        w = \sigma_1 \cdots \sigma_l \sigma_{l + 1} \cdots \sigma_r \sigma_{r + 1} \cdots \sigma_{\abs{g}}
+    \]
+    with \(p_l = p_r\) as in the notation in \autoref{thm:pumping-lemma-for-regular-languages}. Then in \(G\), we have
+    \[
+        g = \sigma_1 \cdots \sigma_l \sigma_{l + 1} \cdots \sigma_r \sigma_l\inverse \cdots \sigma_1 \inverse \sigma_1 \cdots \sigma_l \sigma_{r + 1} \cdots \sigma_{\abs{g}}.
+    \]
+
+    We note that reading the characters
+    \[
+        \sigma_1 \cdots \sigma_l \sigma_{l + 1} \cdots \sigma_r \sigma_l\inverse \cdots \sigma_1 \inverse
+    \]
+    is identical to reading
+    \[
+        \sigma_1 \cdots \sigma_l \sigma_l\inverse \cdots \sigma_1 \inverse
+    \]
+    since the state after reading \(\sigma_l\) is identical to the state after reading \(\sigma_r\). Bu this represents the identity in \(G\), so is accepted in the language, and hence so must the characters up to the inverse. So
+    \[
+        g = \sigma_1 \cdots \sigma_l \sigma_{r + 1} \cdots \sigma_{\abs{g}}
+    \]
+    is a shorter word representing \(g\), which is a contradiction. Hence \(\langacc\pqty{G}\) is not regular.
+
+    Now, suppose \(G\) is finite. Then the (directed, labelled) \term{Cayley graph} of \(G = \angBrac{x_1, \ldots, x_n}\) could be directly interpreted as a finite state automaton, defined as follows. Define our DFA \(D\) as \(Q = G\), \(q_0 = e\), \(F = \Bqty{q_0}\), and the alphabet
+    \[
+        \Sigma = \Bqty{x_1, \ldots, x_n, X_1, \ldots, X_n},
+    \]
+    and the transition function is given by
+    \[
+        \delta\pqty{g, \sigma} = g \sigma
+    \]
+    where we multiply in \(G\). Then the extended transition function is simply given by
+    \[
+        \hat{\delta} \pqty{q_0, \sigma_1 \ldots \sigma_k} = e \sigma_1 \cdots \sigma_k \in G
+    \]
+    is accepted, if and only if \(\sigma_1 \cdots \sigma_k = e\) in \(G\). Hence \(\langacc\pqty{D} = \langacc\pqty{G}\), and so \(\langacc\pqty{G}\) is regular.
+\end{proof}
+
+\begin{example*}
+    Consider \(C_5 = \angBrac{2}\). Then the Cayley graph of \(C_5\) will be pointing in the \(0 \to 2 \to 4 \to 1 \to 3\) labelled by \(2\), and in the \(0 \to 3 \to 1 \to 4 \to 2\) labelled by \(2\inverse\).
+\end{example*}
+
+Infinite groups also have Cayley graphs, but clearly this is not a \emph{finite}-state automaton.
+
+\normalsize
+
+\subsection{Equivalence Relations and Minimisation of DFAs}
+
+Given a DFA \(D\) over an alphabet \(\Sigma\), we want a DFA \(D'\) over \(\Sigma\) with \(\langacc\pqty{D'} = \langacc\pqty{D}\) but with the fewest possible number of states. For examples, DFAs from subset construction (\autoref{def:subset-construction} and \autoref{def:subset-construction-with-epsilon-transitions}) are often not minimal, and we want to reduce the number of states.
+
+\begin{definition}[Accessible and Inaccessible States]
+    \label{def:accessible-and-inaccessible-states}%
+    An \term{accessible state} \(q \in Q\) of a DFA is one where there is some \(w \in \Sigma\kstar\) such that \(\hat{\delta}\pqty{q_0, w} = q\), and an \term{inaccessible state} is one that is not accessible.
+\end{definition}
+
+Form a DFA \(D\), we can form a DFA \(A\) with no inaccessible states, but still with \(\langacc\pqty{D} = \langacc\pqty{A}\). Let \(n = \abs{Q_D}\), and then we form \(S_i \subseteq Q_D\) inductively by
+\[
+    S_0 = \Bqty{q_0} \qand S_{i + 1} = \bigcup_{q \in S_i} \pqty{\bigcup_{\sigma \in \Sigma} \delta_D \pqty{q, \sigma}}.
+\]
+
+Then \(S_i\) is the states reachable from \(q_0\) after exactly \(i\) steps, and the set of accessible states can be reached after \(\pqty{n - 1}\) sets (by removing the closed loops of repeated states). So set
+\[
+    S = \bigcup_{i = 0}^{n - 1} S_i,
+\]
+and \(Q_A = S\), \(F_A = F_D \cap S\), and \(\delta_A\) is the restriction of \(\delta_D\) to \(Q_A \times \Sigma\), which must map to \(Q_A\) by construction.
+
+But this might not be enough. Moreover, what about uniqueness?
+
+\begin{definition}[Equivalence of DFAs]
+    For two DFAs \(A, B\) over the same alphabet \(\Sigma\), we say \(A\) and \(B\) are \term{equivalent}, written \(A \equiv B\), if up to relabelling of (non-start) states, they are the same DFA (which would certainly imply \(\langacc\pqty{A} = \langacc\pqty{B}\)).
+\end{definition}
+
+For a single DFA \(D\), we group together equivalent states.
+
+\begin{definition}[Equivalence of States]
+    For a DFA \(D\), we call two states \(p, q \in Q\) \term{equivalent} or \term{indistinguishable}, if for any \(w \in \Sigma\kstar\), we have
+    \[
+        \hat{\delta}\pqty{p, w} \in F \iff \hat{\delta}\pqty{q, w} \in F.
+    \]
+
+    We denote this as \(p \sim q\). Otherwise, we say \(p\) and \(q\) are \term{distinguishable} by word \(w\), and denote this as \(p \not\sim q\).
+\end{definition}
+
+\begin{proposition}[Equivalence of States]
+    \label{prop:equivalence-of-states}%
+    For a DFA \(D\) and two arbitrary states \(p, q \in Q\), we have the following.
+
+    \begin{enumerate}
+        \item \(\sim\) is an equivalence relation on \(Q\).
+        \item If \(p \sim q\), then for any \(\sigma \in \Sigma\), we have \(\delta\pqty{p, \sigma} \sim \delta\pqty{q, \sigma}\), and \(\hat{\delta}\pqty{p, w} \sim \hat{\delta}\pqty{q, w}\) for any \(w \in \Sigma\kstar\).
+        \item If \(p \sim q\), then \(p\) is accepting \(p \in F\) if and only if \(q\) is accepting \(q \in F\).
+    \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+    \begin{enumerate}
+        \item We check transitivity. If \(p \sim q\) and \(q \sim r\), then for any \(w \in \Sigma\kstar\), both \(\hat{\delta}\pqty{p, w} \in F \iff \hat{\delta}\pqty{q, w} \in F\), as are both of \(\hat{\delta}\pqty{q, w} \in F \iff \hat{\delta}\pqty{r, w} \in F\). So \(\hat{\delta}\pqty{p, w} \in F \iff \hat{\delta}\pqty{r, w} \in F\), and hence \(p \sim r\).
+        \item Suppose we have \(\sigma \in \Sigma\), but \(\delta\pqty{p, \sigma} \not\sim \delta\pqty{q, \sigma}\). Then there is some \(w \in \Sigma\kstar\) such that \(\hat{\delta}\pqty{\delta\pqty{p, \sigma}, w} \in F\) but \(\hat{\delta}\pqty{\delta\pqty{q, \sigma}, w} \notin F\). But then \(p\) and \(q\) are distinguished by \(\sigma w\) by \autoref{lem:transitivity-of-extended-transition-function}. To prove for \(w \in \Sigma\kstar\), we use induction on the length of \(w\).
+        \item Put \(w = \emptyword\) in the definition gives equivalence.
+    \end{enumerate}
+\end{proof}
+
+We now reduce the number of states in a DFA by identifying equivalent states.
+
+\begin{definition}[Minimal/Quotient DFA]
+    \label{def:minimal-quotient-dfa}%
+    Given a DFA \(D = \pqty{Q, \Sigma, \delta, q_0, F}\), we define the \term{minimal/quotient DFA} \(\flatfrac{D}{\sim} = \pqty{\flatfrac{Q}{\sim}, \Sigma, \delta', \bqty{q_0}, F'}\), where we define the transition function
+    \[
+        \delta' \pqty{\bqty{q}, \sigma} = \bqty{\delta\pqty{q, \sigma}}
+    \]
+    which is well-defined by \autoref{prop:equivalence-of-states} (ii), and the accept states
+    \[
+        F' = \set{\bqty{q}}{q \in F}
+    \]
+    which is well-defined by \autoref{prop:equivalence-of-states} (iii).
+\end{definition}
+
+\begin{lemma}[Compatibility of Extended Transition Functions]
+    \label{lem:compatibility-of-extended-transition-functions}%
+    For a DFA \(D\) and its minimal DFA \(\flatfrac{D}{\sim}\), take \(q \in Q\) and \(w \in \Sigma\kstar\). Then
+    \[
+        \hat{\delta}'\pqty{\bqty{q}, w} = \bqty{\hat{\delta}\pqty{q, w}}.
+    \]
+\end{lemma}
+
+\begin{proof}
+    This is by induction on the word length, as in \autoref{lem:transitivity-of-extended-transition-function}. Note
+    \begin{align*}
+        \hat{\delta}' \pqty{\bqty{q}, \sigma_1 \ldots \sigma_k} &= \delta' \pqty{\hat{\delta}'\pqty{\bqty{q}, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k} \\
+        &= \delta' \pqty{\bqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_{k - 1}}}, \sigma_k} && \text{Induction Step} \\
+        &= \bqty{\delta\pqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_{k - 1}}, \sigma_k}} \\
+        &= \bqty{\hat{\delta}\pqty{q, \sigma_1 \ldots \sigma_k}}.
+    \end{align*}
+\end{proof}
+
+\begin{theorem}[Minimal DFA accepts the Same Language]
+    For a DFA \(D\), we have \(\langacc\pqty{D} = \langacc\pqty{\flatfrac{D}{\sim}}\).
+\end{theorem}
+
+\begin{proof}
+    For all \(w \in \Sigma\kstar\), we have
+    \begin{align*}
+        w \in \langacc\pqty{\flatfrac{D}{\sim}} &\iff \hat{\delta}'\pqty{\bqty{q_0}, w} \in F' \\
+        &\iff \bqty{\hat{\delta}\pqty{q_0, w}} \in F' && \text{by \autoref{lem:compatibility-of-extended-transition-functions}} \\
+        &\iff \hat{\delta}\pqty{q_0, w} \in F && \text{by \autoref{def:minimal-quotient-dfa}} \\
+        &\iff w \in \langacc\pqty{D}.
+    \end{align*}
+\end{proof}
+
+\begin{lemma}[Minimal DFA has No Equivalent States]
+    For a DFA \(D\) and its minimal DFA \(\flatfrac{D}{\sim}\), no two states of \(\flatfrac{D}{\sim}\) are equivalent.
+\end{lemma}
+
+\begin{proof}
+    Suppose for two states \(p, q\) of \(D\), we have \(\bqty{p} \sim \bqty{q}\) in \(\flatfrac{D}{\sim}\). Then for all words \(w\), we have \(\hat{\delta}' \pqty{\bqty{p}, w}\) and \(\hat{\delta}' \pqty{\bqty{q}, w}\) are both (non-)accepting in \(\flatfrac{D}{\sim}\). But by \autoref{lem:compatibility-of-extended-transition-functions}, we have \(\hat{\delta}\pqty{p, w}\) and \(\hat{\delta}\pqty{q, w}\) are both (non-)accepting in \(D\). So \(\hat{\delta}\pqty{p, w}\) and \(\hat{\delta}\pqty{q, w}\) are both (non-)accepting in \(D\), and hence \(p \sim q\) in \(D\). So \(\bqty{p} = \bqty{q}\) in \(\flatfrac{D}{\sim}\).
+\end{proof}
+
+\begin{corollary}
+    If \(D\) is a DFA, then \(\flatfrac{\pqty{\flatfrac{D}{\sim}}}{\sim} \equiv \flatfrac{D}{\sim}\) as DFAs.
+\end{corollary}
+
+\begin{proof}
+    On forming \(\flatfrac{D}{\sim}\), no two distinct states of \(\flatfrac{D}{\sim}\) are equivalent, so for each state \(s \in \flatfrac{D}{\sim}\), on forming \(\flatfrac{\pqty{\flatfrac{D}{\sim}}}{\sim}\), we see that the new states are simply \(\bqty{s} = \Bqty{s}\), and simply relabelling back to \(s\), we have the accept states and transition functions are identical, so \(\flatfrac{\pqty{\flatfrac{D}{\sim}}}{\sim} \equiv \flatfrac{D}{\sim}\).
+\end{proof}
+
+\begin{figure}[ht!]
+    \centering
+    \begin{tikzpicture}[->,>=Stealth,shorten >=1pt,auto,node distance=3cm,semithick,initial text=Start]
+        \node[state,initial]   (q0)                    {\(q_0\)};
+        \node[state]           (q1) [right of=q0]      {\(q_1\)};
+        \node[state]           (q2) [right of=q1]      {\(q_2\)};
+        \node[state,accepting] (q3) [right of=q2]      {\(q_3\)};
+
+        \node[state]           (q4) [below of=q0]      {\(q_4\)};
+
+        \path (q0) edge                node {\texttt{c}} (q1)
+                (q1) edge                node {\texttt{a}} (q2)
+                (q2) edge                node {\texttt{t}} (q3)
+                (q0) edge [loop below]   node {\(\Sigma\setminus\Bqty{\texttt{c}}\)} (q0)
+                (q1) edge [bend left=30] node {\(\Sigma\setminus\Bqty{\texttt{a, c}}\)} (q0)
+                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\Bqty{\texttt{c, t}}\)} (q0)
+                (q3) edge [loop right]  node {\(\Sigma\)} (q3)
+                (q1) edge [loop below]   node {\texttt{c}} (q1)
+                (q2) edge [bend left=30]   node {\texttt{c}} (q1)
+                (q4) edge [loop right]   node {\(\Sigma\)} (q4);
+    \end{tikzpicture}
+    \caption{DFA for strings containing \texttt{cat}}
+    \label{fig:dfa-cat-again}
+\end{figure}
+
+\begin{example*}
+    The ``cat'' DFA in \autoref{fig:dfa-cat-again} has no inaccessible states, and no equivalent states, e.g.
+    \[
+        \hat{\delta} \pqty{q_1, \texttt{at}} = q_3 \in F,
+    \]
+    while
+    \[
+        \hat{\delta} \pqty{q_0, \texttt{at}} = q_0 \notin F,
+    \]
+    so \texttt{at} distinguishes \(q_0\) and \(q_1\).
+
+    No we add a ``phantom'' state \(q_4\) to \(C\) with no arrows to or from the other states (send everything to \(q_4\)) which is not an accept state, then in the new DFA, we have \(q_4\) is inaccessible, and is distinguishable from all the others, since whatever word from there will never reach an accepting state.. So all states are distinguishable, but \(q_4\) is inaccessible, and simply taking the quotient of equivalent states clearly does not remove \(q_4\) to minimise the DFA.
+\end{example*}
+
+Here, we will \emph{first} remove inaccessible states, and then minimise the DFA by taking the quotient.
+
+\begin{theorem}[Minimal DFA is Unique]
+    If the DFA \(D\) has no inaccessible states, and suppose \(A\) is another DFA accepting the same language \(\langacc\pqty{D} = \langacc\pqty{A}\), then
+    \begin{itemize}
+        \item \(A\) has at least as many states as \(\flatfrac{D}{\sim}\), and
+        \item if \(A\) has the same number of states as \(\flatfrac{D}{\sim}\), then \(A \equiv \flatfrac{D}{\sim}\).
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    Take a DFA \(B\) with the fewest states, subject to \(\langacc\pqty{B} = \langacc\pqty{D}\). Then \(B\) has no inaccessible states (otherwise we could remove them, as in \autoref{def:accessible-and-inaccessible-states}), and no two states of \(B\) are equivalent (otherwise we could quotient them out). Furthermore, \(\flatfrac{D}{\sim}\) does not have any inaccessible states, since for any state \(\bqty{q}\), we have some \(w\), such that \(\hat{\delta} \pqty{q_0, w} = q\) since it holds for \(D\), then \(\hat{\delta}' \pqty{\bqty{q_0}, w} =  \bqty{q}\). So let
+    \begin{align*}
+        \flatfrac{D}{\sim} &= \pqty{\flatfrac{Q}{\sim}, \Sigma, \delta', \bqty{q_0}, F'}, \\
+        B &= \pqty{Q_B, \Sigma, d, s_0, G}.
+    \end{align*}
+ \end{proof}
