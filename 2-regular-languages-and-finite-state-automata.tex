@@ -876,7 +876,7 @@ For a single DFA \(D\), we group together equivalent states.
         \hat{\delta}\pqty{p, w} \in F \iff \hat{\delta}\pqty{q, w} \in F.
     \]
 
-    We denote this as \(p \sim q\). Otherwise, we say \(p\) and \(q\) are \term{distinguishable} by word \(w\), and denote this as \(p \not\sim q\).
+    We denote this as \(p \sim q\). Otherwise, we say \(p\) and \(q\) are \term{distinguishable} by word \(w\), and denote this as \(p \nsim q\).
 \end{definition}
 
 \begin{proposition}[Equivalence of States]
@@ -893,7 +893,7 @@ For a single DFA \(D\), we group together equivalent states.
 \begin{proof}
     \begin{enumerate}
         \item We check transitivity. If \(p \sim q\) and \(q \sim r\), then for any \(w \in \Sigma\kstar\), both \(\hat{\delta}\pqty{p, w} \in F \iff \hat{\delta}\pqty{q, w} \in F\), as are both of \(\hat{\delta}\pqty{q, w} \in F \iff \hat{\delta}\pqty{r, w} \in F\). So \(\hat{\delta}\pqty{p, w} \in F \iff \hat{\delta}\pqty{r, w} \in F\), and hence \(p \sim r\).
-        \item Suppose we have \(\sigma \in \Sigma\), but \(\delta\pqty{p, \sigma} \not\sim \delta\pqty{q, \sigma}\). Then there is some \(w \in \Sigma\kstar\) such that \(\hat{\delta}\pqty{\delta\pqty{p, \sigma}, w} \in F\) but \(\hat{\delta}\pqty{\delta\pqty{q, \sigma}, w} \notin F\). But then \(p\) and \(q\) are distinguished by \(\sigma w\) by \autoref{lem:transitivity-of-extended-transition-function}. To prove for \(w \in \Sigma\kstar\), we use induction on the length of \(w\).
+        \item Suppose we have \(\sigma \in \Sigma\), but \(\delta\pqty{p, \sigma} \nsim \delta\pqty{q, \sigma}\). Then there is some \(w \in \Sigma\kstar\) such that \(\hat{\delta}\pqty{\delta\pqty{p, \sigma}, w} \in F\) but \(\hat{\delta}\pqty{\delta\pqty{q, \sigma}, w} \notin F\). But then \(p\) and \(q\) are distinguished by \(\sigma w\) by \autoref{lem:transitivity-of-extended-transition-function}. To prove for \(w \in \Sigma\kstar\), we use induction on the length of \(w\).
         \item Put \(w = \emptyword\) in the definition gives equivalence.
     \end{enumerate}
 \end{proof}
@@ -946,6 +946,7 @@ We now reduce the number of states in a DFA by identifying equivalent states.
 \end{proof}
 
 \begin{lemma}[Minimal DFA has No Equivalent States]
+    \label{lem:minimal-dfa-has-no-equivalent-states}%
     For a DFA \(D\) and its minimal DFA \(\flatfrac{D}{\sim}\), no two states of \(\flatfrac{D}{\sim}\) are equivalent.
 \end{lemma}
 
@@ -1003,6 +1004,7 @@ We now reduce the number of states in a DFA by identifying equivalent states.
 Here, we will \emph{first} remove inaccessible states, and then minimise the DFA by taking the quotient.
 
 \begin{theorem}[Minimal DFA is Unique]
+    \label{thm:minimal-dfa-is-unique}%
     If the DFA \(D\) has no inaccessible states, and suppose \(A\) is another DFA accepting the same language \(\langacc\pqty{D} = \langacc\pqty{A}\), then
     \begin{itemize}
         \item \(A\) has at least as many states as \(\flatfrac{D}{\sim}\), and
@@ -1016,4 +1018,59 @@ Here, we will \emph{first} remove inaccessible states, and then minimise the DFA
         \flatfrac{D}{\sim} &= \pqty{\flatfrac{Q}{\sim}, \Sigma, \delta', \bqty{q_0}, F'}, \\
         B &= \pqty{Q_B, \Sigma, d, s_0, G}.
     \end{align*}
- \end{proof}
+
+    We form the ``disjoint union DFA'' \(U\) of \(\flatfrac{D}{\sim}\) and \(B\), with
+    \[
+        U = \pqty{\flatfrac{Q}{\sim} \sqcup Q_B, \Sigma, \Delta, \bqty{q_0}, F' \sqcup G},
+    \]
+    where we define the transition function \(\Delta\) by
+    \[
+        \function{\Delta}{\pqty{\flatfrac{Q}{\sim} \sqcup Q_B} \times \Sigma}{\flatfrac{Q}{\sim} \sqcup Q_B}{\pqty{q, \sigma}}{\begin{cases}
+            \delta'\pqty{q, \sigma} & q \in \flatfrac{Q}{\sim}, \\
+            d\pqty{q, \sigma} & q \in Q_B,
+        \end{cases}}
+    \]
+    via \(\delta'\) and \(d\).
+
+    As \(\langacc\pqty{\flatfrac{D}{\sim}} = \langacc\pqty{D} = \langacc\pqty{B}\), this means that states \(\bqty{q_0}\) and \(s_0\) of \(U\) are equivalent, because reading a word in \(U\) starting at \(\bqty{q_0}\) is the same as it is in \(\flatfrac{D}{\sim}\), and also on \(B\) starting at \(s_0\).
+
+    Then for any state \(p \in \flatfrac{Q}{\sim}\), there is some \(s \in S\) with \(p \sim s\) in \(U\), because we have some word \(w \in \Sigma\kstar\) with \(\hat{\delta}' \pqty{\bqty{q_0}, w} = p\) as \(p\) is accessible in \(\flatfrac{D}{\sim}\). But then \(\bqty{q_0} \sim s_0\) in \(U\), so by \autoref{prop:equivalence-of-states} (ii),
+    \[
+        p = \hat{\Delta} \pqty{\bqty{q_0}, w} \sim \hat{\Delta} \pqty{s_0, w} = \hat{d}\pqty{s_0, w} = s
+    \]
+    where \(s \in S\).
+
+    Now, consider in \(U\) the equivalence classes of the states if \(\flatfrac{D}{\sim} > \abs{B}\). Then we would have two states \(p_1, p_2\) of \(\flatfrac{D}{\sim}\) that are equivalent to a single state of \(B\). But \(\sim\) is an equivalence relation, so \(p_1 \sim p_2\) in \(U\), i.e.,
+    \[
+        \hat{\Delta} \pqty{p_1, w} \in G \sqcup F' \iff \hat{\Delta} \pqty{p_2, w} \in G \sqcup F'.
+    \]
+
+    But by the disjointness of the DFAs in \(U\), we must have \(\hat{\Delta} \pqty{p_i, w} \in G \sqcup F'\) if and only if \(\hat{\delta}' \pqty{p_i, w} \in F'\) for \(i = 1, 2\), so \(p_1, p_2\) are equivalent states in \(\flatfrac{D}{\sim}\). This contradicts with \autoref{lem:minimal-dfa-has-no-equivalent-states}.
+
+    So we now have \(\abs{\flatfrac{D}{\sim}} = \abs{B}\) by minimality, and we want to show that they are equivalent.
+
+    Note that each state of \(\flatfrac{D}{\sim}\) is equivalent in \(U\) to a state in \(B\) and vice versa. As pairs of equivalent states in \(U\) are preserved under \(\Delta\) and all states are accessible, the DFAs \(\flatfrac{D}{\sim}\) and \(B\) are ``matched'' exactly under this equivalence, and hence they are equivalent as DFAs. As an example, \(\bqty{q_0} \sim s_0\) in \(U\), so
+    \[
+        \delta'\pqty{\bqty{q_0}, \sigma} = \Delta\pqty{\bqty{q_0}, \sigma} \sim \Delta\pqty{s_0, \sigma} = d\pqty{s_0, \sigma}.
+    \]
+
+    So \(\flatfrac{D}{\sim} \equiv B\).
+\end{proof}
+
+So an algorithm of finding the minimal DFA is as follows. We first remove inaccessible states, and then we find the equivalence classes of the remaining states, and take the quotient DFA. To find equivalent states, we use \term{Hopcroft's table filling algorithm}.
+
+We consider the table \(Q \times Q\), with the \(\pqty{p, q}\)th entry either blank or a cross. If it is a cross, it means (at that time of the algorithm) we have already shown \(p \nsim q\). Since \(\sim\) is symmetric, we only need to fill in the lower left part of the table, starting with all blanks.
+
+\begin{itemize}
+    \item \textbf{Base Step.} Put a cross whenever we have \(\pqty{p, q}\) with one in \(F\), and one is not, as \(\emptyword\) distinguishes.
+
+    \item \textbf{Inductive Step.} Take any pair \(\pqty{p, q}\) with an empty entry. If we have any \(\sigma \in \Sigma\), with \(\delta\pqty{p, \sigma} = r\) and \(\delta\pqty{q, \sigma} = s\), and \(\pqty{r, s}\) is already marked with a cross, then we mark \(\pqty{p, q}\) with a cross as well, since they are distinguished by \autoref{prop:equivalence-of-states} (ii).
+
+    \item \textbf{Halt.} We halt when this fails for all unmarked pairs and symbols.
+
+    \item \textbf{Correctness.} If we have a pair \(\pqty{p, q}\) unmarked but \(p \nsim q\), take the pair with the shortest distinguishing word \(w = \sigma_1 \cdots \sigma_n\) where, say, \(\hat{\delta}\pqty{p, w} \in F\) but \(\hat{\delta}\pqty{q, w} \notin F\). Now \(w \neq \emptyword\) by the base step, so the pair \(r = \delta\pqty{p, \sigma_1}\) and \(s = \delta\pqty{q, \sigma_1}\) is distinguished by \(\sigma_2 \cdots \sigma_n\), which is shorter than \(w\). So by the inductive step, we must have marked \(\pqty{r, s}\) with a cross, and hence we must have marked \(\pqty{p, q}\) with a cross as well, by the inductive step. This is a contradiction.
+\end{itemize}
+
+Finally, if given two DFAs \(D_1\) and \(D_2\) over \(\Sigma\), we can test whether or not they accept the same languages. We remove inaccessible states to get \(E_1\) and \(E_2\), and then their minimal DFAs are \(\flatfrac{E_1}{\sim}\) and \(\flatfrac{E_2}{\sim}\), having the same languages as \(D_1\) and \(D_2\), respectively.
+
+But by \autoref{thm:minimal-dfa-is-unique}, if \(\langacc\pqty{\flatfrac{E_1}{\sim}} = \langacc\pqty{\flatfrac{E_2}{\sim}}\), then they have the same number of states, and \(\flatfrac{E_1}{\sim} \equiv \flatfrac{E_2}{\sim}\). So we test for this, and if yes we do have the same language, and if not, then they accept different languages.
