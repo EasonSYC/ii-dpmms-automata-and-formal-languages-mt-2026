@@ -4,7 +4,7 @@
 Suppose we want to describe a language \(L\) over \(\Sigma\), using only a finite amount of information. We could extend \(\Sigma\) with other symbols to an alphabet \(\Pi\) and assign (non-uniquely) a particular a word \(w \in \Pi\kstar\) to \(L\). But we can only do this for countably many \(L\). But we want \(w\) to \term{describe} \(L\).
 
 \begin{example}
-    For example, if \(\Sigma = \Bqty{0, 1}\) and \(L\) is all words over \(\Sigma\) that start with a \(1\). We can use \(\Pi = \Bqty{0, 1, a, \ldots, z, \_}\) and using natural language, \(w = \texttt{all words over \(\Sigma\) that start with a \(1\)}\).
+    For example, if \(\Sigma = \set{0, 1}\) and \(L\) is all words over \(\Sigma\) that start with a \(1\). We can use \(\Pi = \set{0, 1, a, \ldots, z, \_}\) and using natural language, \(w = \texttt{all words over \(\Sigma\) that start with a \(1\)}\).
 \end{example}
 
 We will see a countable class of languages, where we can do this not via natural language, but symbolically We first give a computational method to determine these languages.
@@ -59,9 +59,9 @@ We will see a countable class of languages, where we can do this not via natural
         \path (q0) edge                node {\texttt{c}} (q1)
                 (q1) edge                node {\texttt{a}} (q2)
                 (q2) edge                node {\texttt{t}} (q3)
-                (q0) edge [loop below]   node {\(\Sigma\setminus\Bqty{\texttt{c}}\)} (q0)
-                (q1) edge [bend left=30] node {\(\Sigma\setminus\Bqty{\texttt{a}}\)} (q0)
-                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\Bqty{\texttt{t}}\)} (q0)
+                (q0) edge [loop below]   node {\(\Sigma\setminus\set{\texttt{c}}\)} (q0)
+                (q1) edge [bend left=30] node {\(\Sigma\setminus\set{\texttt{a}}\)} (q0)
+                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\set{\texttt{t}}\)} (q0)
                 (q3) edge [loop right]  node {\(\Sigma\)} (q3);
     \end{tikzpicture}
     \caption{Incorrect Attempt of DFA for strings containing \texttt{cat}}
@@ -79,9 +79,9 @@ We will see a countable class of languages, where we can do this not via natural
         \path (q0) edge                node {\texttt{c}} (q1)
                 (q1) edge                node {\texttt{a}} (q2)
                 (q2) edge                node {\texttt{t}} (q3)
-                (q0) edge [loop below]   node {\(\Sigma\setminus\Bqty{\texttt{c}}\)} (q0)
-                (q1) edge [bend left=30] node {\(\Sigma\setminus\Bqty{\texttt{a, c}}\)} (q0)
-                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\Bqty{\texttt{c, t}}\)} (q0)
+                (q0) edge [loop below]   node {\(\Sigma\setminus\set{\texttt{c}}\)} (q0)
+                (q1) edge [bend left=30] node {\(\Sigma\setminus\set{\texttt{a, c}}\)} (q0)
+                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\set{\texttt{c, t}}\)} (q0)
                 (q3) edge [loop right]  node {\(\Sigma\)} (q3)
                 (q1) edge [loop below]   node {\texttt{c}} (q1)
                 (q2) edge [bend left=30]   node {\texttt{c}} (q1);
@@ -191,7 +191,7 @@ Given an NFA \(N\), we may define the transition diagram and table in the same w
 \end{figure}
 
 \begin{example*}
-    Consider \autoref{fig:nfa-example}. If we read the word \(w = \sigma_1 \sigma_2\), then after state one, we are in the set of states \(\Bqty{a, b, d}\). After reading \(\sigma_2\), we are in the set of states \(\Bqty{c, q_0, d}\).
+    Consider \autoref{fig:nfa-example}. If we read the word \(w = \sigma_1 \sigma_2\), then after state one, we are in the set of states \(\set{a, b, d}\). After reading \(\sigma_2\), we are in the set of states \(\set{c, q_0, d}\).
 \end{example*}
 
 \begin{definition}[Extended Transtion Function (NFA)]
@@ -202,7 +202,7 @@ Given an NFA \(N\), we may define the transition diagram and table in the same w
     \]
     defined inductively by
     \begin{itemize}
-        \item \(\hat{\delta} \pqty{q, \emptyword} = \Bqty{q}\),
+        \item \(\hat{\delta} \pqty{q, \emptyword} = \set{q}\),
         \item \(\hat{\delta} \pqty{q, \sigma_1} = \delta(q, \sigma_1)\), and
         \item the inductive step
         \[
@@ -218,7 +218,7 @@ Furthermore, it is going to be even more flexible, if we can change \emph{certai
 \begin{definition}[\(\emptyword\)-NFA]
     An \term{\(\emptyword\)-NFA} is a quintuple \(E = \pqty{Q, \Sigma, \delta, q_0, F}\) just like an NFA, except that the \term{transition function} is now
     \[
-        \functiondomain{\delta}{Q \times \pqty{\Sigma \cup \Bqty{\emptyword}}}{\powerset\pqty{Q}}.
+        \functiondomain{\delta}{Q \times \pqty{\Sigma \cup \set{\emptyword}}}{\powerset\pqty{Q}}.
     \]
 \end{definition}
 
@@ -227,7 +227,7 @@ Here, rather than the empty word being a symbol, it ``acts as a symbol''.
 Now, we want to define how we process a word.
 
 \begin{definition}[\(\emptyword\)-Closure]
-    For an \(\emptyword\)-NFA \(E\) and a state \(Q\), we define the \term{\(\emptyword\)-closure} \(\ecl\pqty{q}\) of \(q\) as the set of states reached from \(q\), by repeated \(\emptyword\)-transitions. That is, define inductively \(S_0 \pqty{q} = \Bqty{q}\), \(S_1 \pqty{q} = \Bqty{q} \cup \delta\pqty{q, \emptyword}\), and 
+    For an \(\emptyword\)-NFA \(E\) and a state \(Q\), we define the \term{\(\emptyword\)-closure} \(\ecl\pqty{q}\) of \(q\) as the set of states reached from \(q\), by repeated \(\emptyword\)-transitions. That is, define inductively \(S_0 \pqty{q} = \set{q}\), \(S_1 \pqty{q} = \set{q} \cup \delta\pqty{q, \emptyword}\), and 
     \[
         S_{i + 1} \pqty{q} = S_i \pqty{q} \cup \bigcup_{r \in S_i\pqty{q}} \delta\pqty{r, \emptyword}.
     \]
@@ -288,7 +288,7 @@ An \(\emptyword\)-NFA has input \(w = \sigma_1 \cdots \sigma_k \in \Sigma\kstar\
 
 Clearly, any DFA ``is'' an NFA by defining the new transition function
 \[
-    \delta'\pqty{q, \sigma} = \Bqty{\delta\pqty{q, \sigma}},
+    \delta'\pqty{q, \sigma} = \set{\delta\pqty{q, \sigma}},
 \]
 and any NFA is an \(\emptyword\)-NFA, by extending transition for
 \[
@@ -311,7 +311,7 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
 
 \begin{definition}[Subset Construction]
     \label{def:subset-construction}%
-    For the NFA \(N = \pqty{Q, \Sigma, \delta, q_0, F}\), the \term{subset construction} for \(N\) produces the DFA \(D = \pqty{\powerset\pqty{Q}, \Sigma, \Delta, \Bqty{q_0}, \mathcal{F}}\), where the accept states are given by the set of subsets of states that contain at least one accept state of \(N\):
+    For the NFA \(N = \pqty{Q, \Sigma, \delta, q_0, F}\), the \term{subset construction} for \(N\) produces the DFA \(D = \pqty{\powerset\pqty{Q}, \Sigma, \Delta, \set{q_0}, \mathcal{F}}\), where the accept states are given by the set of subsets of states that contain at least one accept state of \(N\):
     \[
         \mathcal{F} = \set{S \subseteq Q}{S \cap F \neq \emptyset},
     \]
@@ -327,27 +327,27 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
     \label{thm:subset-construction-equivalence}%
     For the NFA \(N\) and DFA \(D\) obtained from the subset construction as in \autoref{def:subset-construction}, and let \(\hat{\delta}\) and \(\hat{\Delta}\) be the respective extended transition functions. Then for all \(w \in \Sigma\kstar\), we have
     \[
-        \hat{\Delta}\pqty{\Bqty{q_0}, w} = \hat{\delta}\pqty{q_0, w}.
+        \hat{\Delta}\pqty{\set{q_0}, w} = \hat{\delta}\pqty{q_0, w}.
     \]
 \end{theorem}
 
 \begin{proof}
     We prove by induction on the length \(k = \abs{w}\). Base case \(k = 0\) is \(w = \emptyword\), then
     \[
-        \hat{\Delta}\pqty{\Bqty{q_0}, \emptyword} = \Bqty{q_0} = \hat{\delta}\pqty{q_0, \emptyword}.
+        \hat{\Delta}\pqty{\set{q_0}, \emptyword} = \set{q_0} = \hat{\delta}\pqty{q_0, \emptyword}.
     \]
 
     Now, suppose that
     \[
-        \hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \cdots \sigma_{k - 1}} = \hat{\delta}\pqty{q_0, \sigma_1 \cdots \sigma_{k - 1}}.
+        \hat{\Delta} \pqty{\set{q_0}, \sigma_1 \cdots \sigma_{k - 1}} = \hat{\delta}\pqty{q_0, \sigma_1 \cdots \sigma_{k - 1}}.
     \]
 
     Then, for \(w = \sigma_1 \cdots \sigma_{k - 1} \sigma_k\), we have
     \begin{align*}
         \hat{\delta} \pqty{q_0, w} &= \bigcup_{p \in \hat{\delta}\pqty{q_0, \sigma_1 \cdots \sigma_{k - 1}}} \delta\pqty{p, \sigma_k} && \text{by \autoref{def:extended-transition-function-nfa}}\\
         &= \Delta \pqty{\hat{\delta} \pqty{q_0, \sigma_1 \cdots \sigma_{k - 1}}, \sigma_k} && \text{by \autoref{def:subset-construction}}\\
-        &= \Delta \pqty{\hat{\Delta} \pqty{\Bqty{q_0}, \sigma_1 \cdots \sigma_{k - 1}}, \sigma_k} && \text{by Induction Hypothesis} \\
-        &= \hat{\Delta} \pqty{\Bqty{q_0}, w}. && \text{by \autoref{def:extended-transition-function-dfa}}
+        &= \Delta \pqty{\hat{\Delta} \pqty{\set{q_0}, \sigma_1 \cdots \sigma_{k - 1}}, \sigma_k} && \text{by Induction Hypothesis} \\
+        &= \hat{\Delta} \pqty{\set{q_0}, w}. && \text{by \autoref{def:extended-transition-function-dfa}}
     \end{align*}
 \end{proof}
 
@@ -364,7 +364,7 @@ Suppose now we have a NFA \(N\). We will produce a DFA \(D\) on the same alphabe
     \]
     which by \autoref{thm:subset-construction-equivalence} is if and only if
     \[
-        \hat{\Delta} \pqty{\Bqty{q_0}, w} \in \mathcal{F},
+        \hat{\Delta} \pqty{\set{q_0}, w} \in \mathcal{F},
     \]
     which is if and only if \(w\) is accepted by \(D\).
 \end{proof}
@@ -430,8 +430,8 @@ The natural question is, why bother? If they are all equivalent in terms of the 
     A \term{regular expression} \(R\) is a finite string of symbols denoting a language \(\langacc\pqty{R}\) over some alphabet, built up from the following inductive rules.
 
     \begin{enumerate}[label=(\arabic*)]
-        \item Both \(\emptyword\) and \(\emptyset\) are regular expressions, with \(\langacc\pqty{\emptyword} = \Bqty{\emptyword}\) and \(\langacc\pqty{\emptyset} = \emptyset\).
-        \item If \(a\) is a symbol (but not \(\emptyword\), \(\emptyset\), \((\), \()\), \({}\kstar\), \(+\)), then \(a\) is a regular expression with \(\langacc\pqty{a} = \Bqty{a}\).
+        \item Both \(\emptyword\) and \(\emptyset\) are regular expressions, with \(\langacc\pqty{\emptyword} = \set{\emptyword}\) and \(\langacc\pqty{\emptyset} = \emptyset\).
+        \item If \(a\) is a symbol (but not \(\emptyword\), \(\emptyset\), \((\), \()\), \({}\kstar\), \(+\)), then \(a\) is a regular expression with \(\langacc\pqty{a} = \set{a}\).
         \item If \(E\) and \(F\) are regular expressions, then:
         \begin{itemize}
             \item \(E + F\) is a regular expression denoting the union, so \(\langacc\pqty{E + F} = \langacc\pqty{E} \cup \langacc\pqty{F}\).
@@ -454,10 +454,10 @@ The natural question is, why bother? If they are all equivalent in terms of the 
 
 \begin{examples*}
     \begin{itemize}
-        \item The regular expression \(0 1\kstar + 1\) is \(\pqty{0 \pqty{1\kstar}} + \pqty{1}\) is the union of the language \(\Bqty{0, 01, 011, 0111, \ldots}\) and the language \(\Bqty{1}\), which is \(\Bqty{0, 01, 011, 0111, \ldots, 1}\).
-        \item The regular expression \(0 + 1\) accepts \(\Bqty{0, 1}\), \(0 + 0\) accepts \(\Bqty{0}\).
+        \item The regular expression \(0 1\kstar + 1\) is \(\pqty{0 \pqty{1\kstar}} + \pqty{1}\) is the union of the language \(\set{0, 01, 011, 0111, \ldots}\) and the language \(\set{1}\), which is \(\set{0, 01, 011, 0111, \ldots, 1}\).
+        \item The regular expression \(0 + 1\) accepts \(\set{0, 1}\), \(0 + 0\) accepts \(\set{0}\).
         \item The regular expression \(\pqty{1 + \emptyword}\pqty{01}\kstar \pqty{0 + \emptyword}\) accepts all strings where \(0\) and \(1\) alternate, including the empty string.
-        \item The regular expression \(\pqty{0 + 1}^3\) are the eight words over \(\Bqty{0, 1}\) of length \(3\).
+        \item The regular expression \(\pqty{0 + 1}^3\) are the eight words over \(\set{0, 1}\) of length \(3\).
     \end{itemize}
 \end{examples*}
 
@@ -565,9 +565,9 @@ The natural question is, why bother? If they are all equivalent in terms of the 
 \end{theorem}
 
 \begin{proof}
-    Given \(D = \pqty{Q, \Sigma, \delta, q_0, F}\), label the states by \(Q = \Bqty{1, 2, \ldots, n}\), and say the start state \(q_0\) is labelled by \(1\). Now, given two states \(1 \leq i, j \leq n\) and \(0 \leq k \leq n\) inclusive, we construct by induction on \(k\) a regular expression \(R_{ij}^{\pqty{k}}\), consisting of exactly the words \(w\) over \(\Sigma\) that begin at state \(i\) and end at state \(j\), and such that all the intermediate states passed through (excluding the endpoints) are labelled by numbers at most \(k\). In other words, we think of a given word \(w\) as a directed path from \(i\) to \(j\).
+    Given \(D = \pqty{Q, \Sigma, \delta, q_0, F}\), label the states by \(Q = \set{1, 2, \ldots, n}\), and say the start state \(q_0\) is labelled by \(1\). Now, given two states \(1 \leq i, j \leq n\) and \(0 \leq k \leq n\) inclusive, we construct by induction on \(k\) a regular expression \(R_{ij}^{\pqty{k}}\), consisting of exactly the words \(w\) over \(\Sigma\) that begin at state \(i\) and end at state \(j\), and such that all the intermediate states passed through (excluding the endpoints) are labelled by numbers at most \(k\). In other words, we think of a given word \(w\) as a directed path from \(i\) to \(j\).
 
-    For \(k = 0\), this does not allow for any intermediate states, and we have to go directly from \(i\) to \(j\). So we let \(\Bqty{a_1, \ldots, a_l}\) be all the symbols that label an edge from \(i\) to \(j\) (if there are no such edges, then \(l = 0\)), and we set
+    For \(k = 0\), this does not allow for any intermediate states, and we have to go directly from \(i\) to \(j\). So we let \(\set{a_1, \ldots, a_l}\) be all the symbols that label an edge from \(i\) to \(j\) (if there are no such edges, then \(l = 0\)), and we set
     \[
         R_{ij}^{\pqty{0}} = \begin{cases}
             a_1 + \cdots + a_l, & l > 0,\\
@@ -619,7 +619,7 @@ The natural question is, why bother? If they are all equivalent in terms of the 
         R_{ij}^{\pqty{k}} = R_{ij}^{\pqty{k - 1}} + R_{ik}^{\pqty{k - 1}} \pqty{R_{kk}^{\pqty{k - 1}}}\kstar R_{kj}^{\pqty{k - 1}}.
     \]
 
-    Finally, if \(F = \Bqty{j_1, \ldots, j_s}\) (and the start state is \(1\)), then the language that \(D\) accepts is given by the regular expression
+    Finally, if \(F = \set{j_1, \ldots, j_s}\) (and the start state is \(1\)), then the language that \(D\) accepts is given by the regular expression
     \[
         R = R_{1 j_1}^{\pqty{n}} + \cdots + R_{1 j_s}^{\pqty{n}},
     \]
@@ -766,7 +766,7 @@ for subwords \(x, y\) and \(z\), where \(y\) gives us the ``loop'' and  then go 
         \]
         since \(L_1 \subseteq L_2\).
 
-        But this is identical to the language of words \(\Bqty{w \text{ representing the identity}}\) for \(G = \ZZ = \angBrac{x}\) with \(X = x\inverse\), and \(\Sigma = \Bqty{x, X}\). So the language of words representing the identity in \(\ZZ\) is not regular.
+        But this is identical to the language of words \(\set{w \text{ representing the identity}}\) for \(G = \ZZ = \angBrac{x}\) with \(X = x\inverse\), and \(\Sigma = \set{x, X}\). So the language of words representing the identity in \(\ZZ\) is not regular.
    \end{enumerate}
 \end{examples*}
 
@@ -776,9 +776,9 @@ The following is a very nice, non-examinable result relating to group theory.
 
 \begin{theorem}[Anisimov's Theorem]
     \label{thm:anisimov-theorem}%
-    Let \(G\) be a finitely generated group with finite generating set \(\Bqty{x_1, \ldots, x_n}\) with formal inverses \(X_i\), and the alphabet
+    Let \(G\) be a finitely generated group with finite generating set \(\set{x_1, \ldots, x_n}\) with formal inverses \(X_i\), and the alphabet
     \[
-        \Sigma = \Bqty{x_1, \ldots, x_n, X_1, \ldots, X_n}.
+        \Sigma = \set{x_1, \ldots, x_n, X_1, \ldots, X_n}.
     \]
 
     Define \term{the language of the group}
@@ -819,9 +819,9 @@ The following is a very nice, non-examinable result relating to group theory.
     \]
     is a shorter word representing \(g\), which is a contradiction. Hence \(\langacc\pqty{G}\) is not regular.
 
-    Now, suppose \(G\) is finite. Then the (directed, labelled) \term{Cayley graph} of \(G = \angBrac{x_1, \ldots, x_n}\) could be directly interpreted as a finite state automaton, defined as follows. Define our DFA \(D\) as \(Q = G\), \(q_0 = e\), \(F = \Bqty{q_0}\), and the alphabet
+    Now, suppose \(G\) is finite. Then the (directed, labelled) \term{Cayley graph} of \(G = \angBrac{x_1, \ldots, x_n}\) could be directly interpreted as a finite state automaton, defined as follows. Define our DFA \(D\) as \(Q = G\), \(q_0 = e\), \(F = \set{q_0}\), and the alphabet
     \[
-        \Sigma = \Bqty{x_1, \ldots, x_n, X_1, \ldots, X_n},
+        \Sigma = \set{x_1, \ldots, x_n, X_1, \ldots, X_n},
     \]
     and the transition function is given by
     \[
@@ -853,7 +853,7 @@ Given a DFA \(D\) over an alphabet \(\Sigma\), we want a DFA \(D'\) over \(\Sigm
 
 Form a DFA \(D\), we can form a DFA \(A\) with no inaccessible states, but still with \(\langacc\pqty{D} = \langacc\pqty{A}\). Let \(n = \abs{Q_D}\), and then we form \(S_i \subseteq Q_D\) inductively by
 \[
-    S_0 = \Bqty{q_0} \qand S_{i + 1} = \bigcup_{q \in S_i} \pqty{\bigcup_{\sigma \in \Sigma} \delta_D \pqty{q, \sigma}}.
+    S_0 = \set{q_0} \qand S_{i + 1} = \bigcup_{q \in S_i} \pqty{\bigcup_{\sigma \in \Sigma} \delta_D \pqty{q, \sigma}}.
 \]
 
 Then \(S_i\) is the states reachable from \(q_0\) after exactly \(i\) steps, and the set of accessible states can be reached after \(\pqty{n - 1}\) sets (by removing the closed loops of repeated states). So set
@@ -959,7 +959,7 @@ We now reduce the number of states in a DFA by identifying equivalent states.
 \end{corollary}
 
 \begin{proof}
-    On forming \(\flatfrac{D}{\sim}\), no two distinct states of \(\flatfrac{D}{\sim}\) are equivalent, so for each state \(s \in \flatfrac{D}{\sim}\), on forming \(\flatfrac{\pqty{\flatfrac{D}{\sim}}}{\sim}\), we see that the new states are simply \(\bqty{s} = \Bqty{s}\), and simply relabelling back to \(s\), we have the accept states and transition functions are identical, so \(\flatfrac{\pqty{\flatfrac{D}{\sim}}}{\sim} \equiv \flatfrac{D}{\sim}\).
+    On forming \(\flatfrac{D}{\sim}\), no two distinct states of \(\flatfrac{D}{\sim}\) are equivalent, so for each state \(s \in \flatfrac{D}{\sim}\), on forming \(\flatfrac{\pqty{\flatfrac{D}{\sim}}}{\sim}\), we see that the new states are simply \(\bqty{s} = \set{s}\), and simply relabelling back to \(s\), we have the accept states and transition functions are identical, so \(\flatfrac{\pqty{\flatfrac{D}{\sim}}}{\sim} \equiv \flatfrac{D}{\sim}\).
 \end{proof}
 
 \begin{figure}[ht!]
@@ -975,9 +975,9 @@ We now reduce the number of states in a DFA by identifying equivalent states.
         \path (q0) edge                node {\texttt{c}} (q1)
                 (q1) edge                node {\texttt{a}} (q2)
                 (q2) edge                node {\texttt{t}} (q3)
-                (q0) edge [loop below]   node {\(\Sigma\setminus\Bqty{\texttt{c}}\)} (q0)
-                (q1) edge [bend left=30] node {\(\Sigma\setminus\Bqty{\texttt{a, c}}\)} (q0)
-                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\Bqty{\texttt{c, t}}\)} (q0)
+                (q0) edge [loop below]   node {\(\Sigma\setminus\set{\texttt{c}}\)} (q0)
+                (q1) edge [bend left=30] node {\(\Sigma\setminus\set{\texttt{a, c}}\)} (q0)
+                (q2) edge [bend right=30] node[above] {\(\Sigma\setminus\set{\texttt{c, t}}\)} (q0)
                 (q3) edge [loop right]  node {\(\Sigma\)} (q3)
                 (q1) edge [loop below]   node {\texttt{c}} (q1)
                 (q2) edge [bend left=30]   node {\texttt{c}} (q1)
