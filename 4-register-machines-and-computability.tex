@@ -1,0 +1,307 @@
+\section{Register Machines and Computability}
+
+Recall the set of all functions \(\functiondomain{f}{\NN}{\NN}\) is uncountable from \textit{IA Numbers and Sets}. Which ones admit a finite description?
+
+For example, we might write out formula, describe in words (e.g. the \(n\)-th prime), or a computer code that evaluates the function. This means we can only describe countably many functions, and most functions would not have a finite description.
+
+So what is a finite description in the first place? First, given \(n \in \NN\), it should allows us to evaluate \(f\pqty{n}\) through a deterministic procedure in a finite time (but could take very long). But a function \(f\) could have \emph{many} finite descriptions.
+
+Say we want to know if 2 descriptions of functions \(f, g\) actually are the same function. Suppose they are not the same function, then we could input \(0\), \(1\), \(2\), \dots and after finitely many time, we may find \(d\) with \(f\pqty{d} \neq g\pqty{d}\). But what if they are the same function? Then doing this same process will never terminate and we would need to wait forever.
+
+\subsection{Register Machines and Computable Functions}
+
+Register machines are a simply and versatile version of a finite description of the ``computer code'' notion. They input and output natural numbers directly. Suppose we have some property of functions \(\functiondomain{f}{\NN}{\NN}\), which a given function \(f\) may or may not satisfy, e.g., if \(f\) has a finite description.
+
+Given an arbitrary subset \(S \subseteq \NN\), we can apply this definition to \(S\) via the \term{characteristic function}
+\[
+    \characteristic_S \pqty{n} = \begin{cases}
+        1, & n \in S,\\
+        0, & n \notin S.
+    \end{cases}
+\]
+
+What about languages \(L \subseteq \Sigma\kstar\)? Say \(\Sigma = \Bqty{0, 1}\), then by binary encoding, we can identify \(\Sigma\kstar\) with \(\NN\) \dots but not quite uniquely, because of possible leading \(0\)s, for example, \(000111 \neq 111\) as words, but would both encode to \(8 \in \NN\). Instead, we use this quite trivial solution: if \(\abs{\Sigma} = n\), suppose \(\Sigma = \set{1, 2, \ldots, n}\), and use a \emph{shifted} base \(n\) numbers. The correspondence is \(a_0 \cdots a_k \in \Sigma\kstar\) corresponds to \(a_0 + a_1 n + \cdots + a_k n^k\), but where \(1 \leq a_0, \ldots, a_k \leq n\). This is a bijection \(b\), and we can say \(L\) has property if and only if \(\characteristic_{b\pqty{L}}\) has the property.
+
+\begin{definition}[Register Machine]
+    Given discrete time steps \(t = 0, 1, 2, \ldots\), a \term{register machine} (RM) \(\registerMachine\) consts of:
+    \begin{enumerate}[label=(\alph*)]
+        \item A sequence of \term{registers} \(R_1, R_2, \ldots\) where at each time \(t\), the \(i\)-th register contains a natural number \(R_i\pqty{t} \in \NN\).
+        \item A \term{finite program} consists of a  fixed number of states \(S_0\) (\term{terminal}), \(S_1\) (\term{start}), \(S_2, \ldots, S_n\), and each state has a fixed instruction performed when the machine is in state \(S_i\). Specially, \(S_0\) contains the instruction \term{halt}, which terminates the program. The other states \(S_1, \ldots, S_n\) contain \emph{exactly} one of the following instructions:
+        \begin{enumerate}[label=\arabic*.]
+            \item \(\sPlus{S_i}{j}{k}\) means add \(1\) to register \(R_j\) and move to state \(S_k\), where \(j > 0\) and \(0 \leq k \leq n\).
+            \item \(\sMinus{S_i}{j}{k}{l}\) means if \(R_j \neq 0\), then subtract one from register \(R_j\) and move to state \(S_k\); otherwise (when \(R_j = 0\)), move to state \(S_l\), where \(j > 0\) and \(0 \leq k, l \leq n\).
+        \end{enumerate}
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}[Sequence of Instructions, Input]
+    A \term{sequence of instructions} for a register machine \(\registerMachine\) is the ordered list of instructions for the program.
+
+    An \term{input} for \(\registerMachine\) is, for some \(k \geq 1\), a \(k\)-tuple of natural numbers \(\pqty{n_1, \ldots, n_k}\) which are placed in registers \(R_1, \ldots, R_k\) at time \(t = 0\).
+
+    At \(t = 0\) we start in state \(S_1\), then follow the instructions, and stop when/if we reach \(S_0\).
+\end{definition}
+
+\begin{definition}[Program Diagram]
+    A \term{program diagram} for \(\registerMachine\) is a (finite) directed graph with labelled vertices and edges, where the vertices are the states and labelled arrows for the instructions:
+    \begin{itemize}
+        \item \(\sPlus{S_i}{j}{k}\) is represented by an arrow from \(S_i\) to \(S_k\) labelled \(R_j + 1\).
+        
+        \begin{center}
+            \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+                \node[state] (si) {\(S_i\)};
+                \node[state] (sk) [right of=si] {\(S_k\)};
+
+                \path[->]
+                    (si) edge node {\(R_{j} + 1\)} (sk);
+            \end{tikzpicture}
+        \end{center}
+
+        \item \(\sMinus{S_i}{j}{k}{l}\) is represented by an arrow from \(S_i\) to \(S_k\) labelled \(R_j - 1\) and a dotted arrow from \(S_i\) to \(S_l\) without a label.
+        
+        \begin{center}
+            \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+                \node[state] (si) {\(S_i\)};
+                \node[state] (sk) [right of=si] {\(S_k\)};
+                \node[state] (sl) [below right of=si] {\(S_l\)};
+
+                \path[->]
+                    (si) edge node {\(R_{j} - 1\)} (sk)
+                        edge[dotted, thick] (sl);
+            \end{tikzpicture}
+        \end{center}
+    \end{itemize}
+\end{definition}
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+            \node[state] (s0) {\(S_0\)};
+            \node[state] (s1) [right of=s0] {\(S_1\)};
+
+            \path[->]
+                (s1) edge[loop right] node {\(R_{1} + 1\)} ();
+        \end{tikzpicture}
+        \caption{Never Halts}
+        \label{fig:register-machine-loop}%
+    \end{subfigure}%
+    ~
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+            \node[state] (s0) {\(S_0\)};
+            \node[state] (s1) [right of=s0] {\(S_1\)};
+
+            \path[->]
+                (s1) edge[dotted] (s0)
+                    edge[loop right] node {\(R_{1} - 1\)} ();
+        \end{tikzpicture}
+        \caption{Empties a register and Halts}
+        \label{fig:register-machine-empty}%
+    \end{subfigure}%
+    ~
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+            \node[state] (s1) at (0,2)     {\(S_1\)};
+            \node[state] (s2) at (3.5,0)   {\(S_2\)};
+            \node[state] (s3) at (7,0)     {\(S_3\)};
+            \node[state] (s0) at (10.5,-1) {\(S_0\)};
+
+            \path[->]
+                (s1) edge[loop right] node {\(R_{j} - 1\)} ()
+                    edge[dotted,thick] (s2)
+                (s2) edge[bend left] node {\(R_{i} - 1\)} (s3)
+                    edge[dotted,thick,bend right=25] (s0)
+                (s3) edge[bend left] node[swap] {\(R_{j} + 1\)} (s2);
+        \end{tikzpicture}
+        \caption{Transfers \(R_i\) to \(R_j\) and Halts}
+        \label{fig:register-machine-transfer}%
+    \end{subfigure}
+    \caption{Examples of Register Machines}
+\end{figure}
+
+\begin{example*}
+    \begin{itemize}
+        \item The register machine in \autoref{fig:register-machine-loop} never halts.
+        \item The register machine in \autoref{fig:register-machine-empty} ``empties'' register \(R_1\) and halts.
+        \item The register machine in \autoref{fig:register-machine-transfer} transfers \(R_i\) to \(R_j\), by emptying \(R_j\) first, and then transferring the contents of \(R_i\) to \(R_j\) one by one, and halts. This always halts (with \(R_i\) empty).
+    \end{itemize}
+\end{example*}
+
+\begin{definition}[Halting, Halting Set, Output]
+    For some \(k > 0\), a program \(P\) or a register machine \(\registerMachine\) \term{halts} on input \(\pqty{n_1, \ldots, n_k} \in \NN^k\) if the machine eventually reaches state \(S_0\) at some finite time. We denote this as \(P\pqty{n_1, \ldots, n_k} \halt\). If it never halts, we write \(P\pqty{n_1, \ldots, n_k} \nothalt\).
+
+    The \term{halting set} \(\haltingSet\pqty{P}\) is the set of inputs on which \(O\) halts:
+    \[
+        \haltingSet\pqty{P} = \bigcup_{k > 0} \set{\pqty{n_1, \ldots, n_k} \in \NN^k}{P\pqty{n_1, \ldots, n_k} \halt}.
+    \]
+
+    Note that \(\pqty{n_1, \ldots, n_k}\) and \(\pqty{n_1, \ldots, n_k, 0}\) are the same input. The \term{output} will be the value (contents) of the register \(R_1\) when the machine halts.
+\end{definition}
+
+\begin{definition}[Upper Register Index]
+    For a program \(P\), the \term{upper register index} \(\upper\pqty{P}\) is the largest index of the register appearing in instructions of \(P\).
+\end{definition}
+
+For input in \(\NN^k\), it suffices to think about \(k \leq \upper\pqty{P}\) registers, since the other registers are never used (and therefore, without loss of generality, can be assumed to be \(0\)).
+
+But what if we don't halt?
+
+\begin{definition}[Partial Function]
+    A \term{partial function} \(\pfunctiondomain{f}{\NN^k}{\NN}\) is one where \(\dom\pqty{f} \subseteq \NN^k\) and the function is undefined otherwise. We say \(f\) is \term{partial computable} by some program \(P\), if all \(\pqty{n_1, \ldots, n_k} \in \dom\pqty{f}\), we have \(P\pqty{n_1, \ldots, n_k} \halt\) and the output is \(f\pqty{n_1, \ldots, n_k}\), and if \(\pqty{n_1, \ldots, n_k} \notin \dom\pqty{f}\), we have \(P\pqty{n_1, \ldots, n_k} \nothalt\).
+
+\end{definition}
+
+Thus given \(P\) and \(k > 0\), we always obtain a partial function \(\pfunctiondomain{f}{\NN^k}{\NN}\) defined by \(P\). There could be many programs \(P\) that compute the same partial function \(f\).
+
+We attempt to build functions out of pieces.
+
+\begin{lemma}[Adding Registers]
+    \label{lem:register-machine-add-registers}%
+    We may add \(R_i\) to \(R_j\) for \(i \neq j\), leaving \(R_i\) unchanged.
+\end{lemma}
+
+\begin{figure}[ht!]
+    \centering
+    \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+        \node[state] (s1) at (0,3)     {\(S_1\)};
+        \node[state] (s2) at (3.5,3)   {\(S_2\)};
+        \node[state] (s3) at (7,3)     {\(S_3\)};
+        \node[state] (s4) at (1,0)     {\(S_4\)};
+        \node[state] (s5) at (5,0)     {\(S_5\)};
+        \node[state] (s0) at (-2,-1.5) {\(S_0\)};
+
+        \path[->]
+            (s1) edge node {\(R_i - 1\)} (s2)
+                 edge[dotted,thick] (s4)
+            (s2) edge node {\(R_n + 1\)} (s3)
+            (s3) edge[bend right=35] node[swap] {\(R_j + 1\)} (s1)
+            (s4) edge[bend left] node {\(R_n - 1\)} (s5)
+                 edge[dotted,thick] (s0)
+            (s5) edge[bend left] node[swap] {\(R_i + 1\)} (s4);
+    \end{tikzpicture}
+    \caption{Adding \(R_i\) to \(R_j\) while Leaving \(R_i\) Unchanged}
+    \label{fig:register-machine-add-registers}%
+\end{figure}
+
+\begin{proof}
+    Consider the machine defined in \autoref{fig:register-machine-add-registers}. The idea is to transfer \(R_i\) to \(R_j\) and \(R_n\), then transfer \(R_n\) back to \(R_i\), where \(n\) is chosen to be sufficiently large. Note that this machine always halts.
+    
+    Then note
+    \[
+        \functionmap{S_0 \pqty{i = 2, j = 1}}{\pqty{n_1, n_2}}{n_1 + n_2}
+    \]
+    is a \term{total function} and is \term{computable}.
+\end{proof}
+
+Note emptying the register \(n \mapsto 0\) is also computable.
+
+\begin{corollary}[Copying Registers]
+    We may copy \(R_i\) to \(R_j\) for \(i \neq j\), leaving \(R_i\) unchanged.
+\end{corollary}
+
+\begin{proof}
+    First, empty \(R_j\), then add \(R_i\) to \(R_j\) while leaving \(R_i\) unchanged by \autoref{lem:register-machine-add-registers}.
+\end{proof}
+
+\begin{remark}
+    Note here that we may use a \term{subroutine} and combine with another program \(P\) that precedes it: let the subroutine use registers \(R_n\) such that \(n > \upper\pqty{P}\). Then replace the halt state of \(P\) with the start state of the subroutine.
+\end{remark}
+
+\subsection{Partial Recursive Functions}
+
+Note partial computable functions has good closure properties.
+
+\begin{theorem}[Closure Properties of Partial Computable Functions]
+    \begin{enumerate}[label=(\alph*)]
+        \item For each \(i \leq k\), the \term{projection function} \(\functionmap{\pi_i^k}{\pqty{n_1, \ldots, n_k}}{n_i}\) is computable.
+        \item The \term{zero function} \(\functionmap{z}{n}{0}\) and the \term{successor function} \(\functionmap{\succ}{n}{n + 1}\) are computable.
+        \item If \(\pfunctiondomain{f}{\NN^k}{\NN}\) and \(\pfunctiondomain{g_i}{\NN^l}{\NN}\) for \(i = 1, \ldots, l\) are partial computable, then the \term{composition} \(\pfunctiondomain{h}{\NN^l}{\NN}\) defined by
+        \[
+            h\pqty{n_1, \ldots, n_l} = f\pqty{g_1\pqty{n_1, \ldots, n_l}, \ldots, g_k\pqty{n_1, \ldots, n_l}}
+        \]
+        is computable.
+
+        Note here we are less strict about the inclusion of range/domains, since we are only dealing with partial functions.
+
+        If all of \(f, g_1, \ldots, g_k\) are total functions, then \(h\) is also total.
+        \item If \(f\) on \(k \geq 0\) variables (\(k = 0\) gives constant functions) and \(g\) on \(\pqty{k + 2}\) variables are partial computable, then the \term{recursion} \(\pfunctiondomain{h}{\NN^{k + 1}}{\NN}\) defined inductively by
+        \begin{align*}
+            h\pqty{n_1, \ldots, n_k, 0} &= f\pqty{n_1, \ldots, n_k}, \\
+            h\pqty{n_1, \ldots, n_k, n_{k + 1} + 1} &= g\pqty{n_1, \ldots, n_k, n_{k + 1}, h\pqty{n_1, \ldots, n_k, n_{k + 1}}}
+        \end{align*}
+        is computable. Note that if \(f\) and \(g\) are total, then \(h\) is also total.
+        \item If \(f\) on \(k + 1\) variables is partial computable, then the \term{minimisation} \(\pfunctiondomain{g}{\NN^k}{\NN}\) defined by (``finding first zero as the last place varies'')
+        \[
+            g\pqty{n_1, \ldots, n_k} = n \qif f\pqty{n_1, \ldots, n_k, n} = 0 \qand f\pqty{n_1, \ldots, n_k, m} > 0 \text{ for all } m < n
+        \]
+        is computable. Note that even if \(f\) is total, then \(g\) may not be total, since \(f\) may never be \(0\) for some inputs.
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+    \begin{enumerate}[label=(\alph*)]
+        \item The projection function is computable by simply transferring the contents of \(R_i\) to \(R_1\) and halting.
+        \item The zero function is computable by emptying \(R_1\) and halting which is demonstrated above. The successor function is computable by adding \(1\) to \(R_1\) and halting.
+        
+        \begin{center}
+            \begin{tikzpicture}[>=Stealth,node distance=3cm,auto]
+                \node[state] (s1) {\(S_1\)};
+                \node[state] (s0) [right of=s1] {\(S_0\)};
+
+                \path[->]
+                    (s1) edge node {\(R_1 + 1\)} (s0);
+            \end{tikzpicture}
+        \end{center}
+
+        \item We may use subroutines. First, transfer \(R_1, \ldots, R_l\) to \(R_{N + 1}, \ldots, R_{N + l}\) for sufficiently large \(N\). Then for each \(1 \leq i \leq k\), we copy \(R_{N + 1}, \ldots, R_{N + l}\) to \(R_{k + 1}, \ldots, R_{k + l}\) and run the program for \(g_i\) with all the registers shifted up by \(k\), and transfer the answer from \(R_{k + 1}\) to \(R_i\). Then we clear \(R_{k + 2}, \ldots, R_N\). Finally, we run the program for \(f\).
+        
+        \item Copy \(R_1, \ldots, R_k\) to \(R_{N + 1}, \ldots, R_{N + k}\). Transfer \(R_{k + 1}\) to \(R_{N + k + 2}\) (which is used to ``count down'' the \(\pqty{k + 1}\)-th variable), then we do \(f\). Then, we execute the following.
+        
+        \begin{center}
+            \begin{tikzpicture}[>=Stealth,node distance=3cm,auto,
+                state/.append style={inner sep=2pt},
+                box/.style={draw,rectangle,align=center,inner sep=6pt}]
+
+                \node[state] (hf)   at (3,3.2)   {\(\Halt\pqty{f}\)};
+                \node[state] (halt) at (0,0)     {HALT};
+                \node[box]   (clr)  at (4.2,0)   {Clear\\ \(R_{k+2},\ldots,R_N\)};
+                \node[state] (hg)   at (8.5,0)   {\(\Halt\pqty{g}\)};
+                \node[box]   (tr)   at (9.6,3.4) {Transfer \(R_1\) to \(R_{k+2}\) then copy\\
+                                                \(R_{N+1},\ldots,R_{N+k+1}\) to \(R_1,\ldots,R_{k+1}\)};
+
+                \path[->]
+                    (hf)  edge node {\(R_{N+k+2} - 1\)} (tr)
+                        edge[dotted,thick] (halt)
+                    (clr) edge node[swap] {\(R_{N+k+1} + 1\)} (hf)
+                    (hg)  edge (clr)
+                    (tr)  edge node[swap] {\(g\)} (hg);
+            \end{tikzpicture}
+        \end{center}
+                
+        \item Copy \(R_1, \ldots, R_k\) to \(R_{N + 1}, \ldots, R_{N + k}\). Then, we execute the following.
+        
+        \begin{center}
+            \begin{tikzpicture}[>=Stealth,node distance=3cm,auto,
+                state/.append style={inner sep=2pt},
+                box/.style={draw,rectangle,align=center,inner sep=6pt}]
+
+                \node[box]   (top) at (5,4.2)    {Copy \(R_{N+1},\ldots,R_{N+k+1}\) to \(R_1,\ldots,R_{k+1}\)\\
+                                                and clear \(R_{k+2},\ldots,R_N\)};
+                \node[state] (q)   at (2,0)      {};
+                \node[state] (hf)  at (6.5,0)    {\(\Halt(f)\)};
+                \node[box]   (bot) at (4.5,-2.2) {Transfer \(R_{N+k+1}\) to \(R_1\) and HALT};
+
+                \path[->]
+                    (top) edge node {\(f\)} (hf)
+                    (hf)  edge node[swap] {\(R_1 - 1\)} (q)
+                        edge[dotted,thick,bend left=40] (bot)
+                    (q)   edge[bend left=25] node {\(R_{N+k+1} + 1\)} (top);
+            \end{tikzpicture}
+        \end{center}
+    \end{enumerate}
+\end{proof}
