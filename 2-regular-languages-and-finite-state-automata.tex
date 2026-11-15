@@ -998,7 +998,7 @@ We now reduce the number of states in a DFA by identifying equivalent states.
     \]
     so \texttt{at} distinguishes \(q_0\) and \(q_1\).
 
-    No we add a ``phantom'' state \(q_4\) to \(C\) with no arrows to or from the other states (send everything to \(q_4\)) which is not an accept state, then in the new DFA, we have \(q_4\) is inaccessible, and is distinguishable from all the others, since whatever word from there will never reach an accepting state.. So all states are distinguishable, but \(q_4\) is inaccessible, and simply taking the quotient of equivalent states clearly does not remove \(q_4\) to minimise the DFA.
+    Now we add a ``phantom'' state \(q_4\) to \(C\) with no arrows to or from the other states (send everything to \(q_4\)) which is not an accept state, then in the new DFA, we have \(q_4\) is inaccessible, and is distinguishable from all the others, since whatever word from there will never reach an accepting state.. So all states are distinguishable, but \(q_4\) is inaccessible, and simply taking the quotient of equivalent states clearly does not remove \(q_4\) to minimise the DFA.
 \end{example*}
 
 Here, we will \emph{first} remove inaccessible states, and then minimise the DFA by taking the quotient.
