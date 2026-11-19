@@ -217,9 +217,10 @@ Note emptying the register \(n \mapsto 0\) is also computable.
 Note partial computable functions has good closure properties.
 
 \begin{theorem}[Closure Properties of Partial Computable Functions]
+    \label{thm:partial-computable-closure-properties}%
     \begin{enumerate}[label=(\alph*)]
         \item For each \(i \leq k\), the \term{projection function} \(\functionmap{\pi_i^k}{\pqty{n_1, \ldots, n_k}}{n_i}\) is computable.
-        \item The \term{zero function} \(\functionmap{z}{n}{0}\) and the \term{successor function} \(\functionmap{\succ}{n}{n + 1}\) are computable.
+        \item The \term{zero function} \(\functionmap{z}{n}{0}\) and the \term{successor function} \(\functionmap{s}{n}{n + 1}\) are computable.
         \item If \(\pfunctiondomain{f}{\NN^k}{\NN}\) and \(\pfunctiondomain{g_i}{\NN^l}{\NN}\) for \(i = 1, \ldots, l\) are partial computable, then the \term{composition} \(\pfunctiondomain{h}{\NN^l}{\NN}\) defined by
         \[
             h\pqty{n_1, \ldots, n_l} = f\pqty{g_1\pqty{n_1, \ldots, n_l}, \ldots, g_k\pqty{n_1, \ldots, n_l}}
@@ -268,7 +269,7 @@ Note partial computable functions has good closure properties.
                 box/.style={draw,rectangle,align=center,inner sep=6pt}]
 
                 \node[state] (hf)   at (3,3.2)   {\(\Halt\pqty{f}\)};
-                \node[state] (halt) at (0,0)     {HALT};
+                \node[state] (halt) at (0,0)     {\(\Halt\)};
                 \node[box]   (clr)  at (4.2,0)   {Clear\\ \(R_{k+2},\ldots,R_N\)};
                 \node[state] (hg)   at (8.5,0)   {\(\Halt\pqty{g}\)};
                 \node[box]   (tr)   at (9.6,3.4) {Transfer \(R_1\) to \(R_{k+2}\) then copy\\
@@ -305,3 +306,403 @@ Note partial computable functions has good closure properties.
         \end{center}
     \end{enumerate}
 \end{proof}
+
+\begin{definition}[Partial Recursive]
+    The class of \term{partial recursive functions} is the smallest class of partial functions \(\pfunctiondomain{f}{\NN^k}{\NN}\) that are closed under the operations as in \autoref{thm:partial-computable-closure-properties}. They are constructed from basic functions and the operations of composition, recursion, and minimisation, for a finite number of times.
+\end{definition}
+
+Partial recursive functions are all partial computable.
+
+\begin{example*}
+    The projection function \(n \mapsto n\) is partial recursive, and the constant functions \(n \mapsto c\) via \(n \mapsto 0 \mapsto 1 \mapsto \cdots \mapsto c\) are partial recursive by composition.
+\end{example*}
+
+\begin{definition}[Primitive Recursive]
+    A function \(f\) is \term{primitive recursive} if if is partial recursive and minimisation is never used in construction of \(f\).
+\end{definition}
+
+Primitive recursive functions are all total recursive. The converse is not true, as seen in the Ackermann function \(A\) back in \textit{IA Numbers and Sets}: this is defined as
+\[
+    A\pqty{0, n} = n + 1, \quad A\pqty{m + 1, 0} = A\pqty{m, 1}, \quad A\pqty{m + 1, n + 1} = A\pqty{m, A\pqty{m + 1, n}}.
+\]
+
+\begin{example}[Addition and Multiplication are Primitive Recursive]
+    \label{ex:primitive-recursive-addition-multiplication}%
+    Addition \(+\) and multiplication \(\times\) are primitive recursive.
+
+    To construct \(+\), let \(P\pqty{m, 0} = m\) (basic function) and build up
+    \[
+        P\pqty{m, n + 1} = P\pqty{m, n} + 1 = g\pqty{m, n, P\pqty{m, n}}
+    \]
+    for
+    \[
+        g\pqty{x, y, z} = z + 1
+    \]
+    which is primitive recursive by composition. Then \(+\) is primitive recursive by recursion.
+
+    For multiplication, let \(T\pqty{m, 0} = 0\) (basic function), and define \(T\pqty{m, n + 1} = T\pqty{m, n} + m = g\pqty{m, n, T\pqty{m, n}}\) for
+    \[
+        g\pqty{x, y, z} = z + x
+    \]
+    which is primitive recursive by composition (projection, sum, composition). Then \(\times\) is primitive recursive by recursion.
+\end{example}
+
+\begin{example}[Power Functions are Primitive Recursive]
+    \label{ex:primitive-recursive-power}%
+    The power function \(\functionmap{E}{\pqty{m, n}}{m^n}\) is primitive recursive. Let \(E\pqty{m, 0} = 1\) (basic function), and define \(E\pqty{m, n + 1} = E\pqty{m, n} \times m = g\pqty{m, n, E\pqty{m, n}}\) for
+    \[
+        g\pqty{x, y, z} = z \times x
+    \]
+    which is primitive recursive by composition (projection, multiplication, composition). Then \(E\) is primitive recursive by recursion.
+\end{example}
+
+We need to ``encode'' finite sequences of arbitrary length in \(\NN\).
+
+\begin{definition}[Prime Factorisation Encoding]
+    Let \(p_i\) be the \(i\)-th prime (where \(p_0 = 2\)). Given any \(n > 0\), write \(\pqty{n}_i\) to be the largest power of \(p_i\) that divides \(n\).
+\end{definition}
+
+\begin{lemma}[Prime Factorisation Encoding is Primitive Recursive]
+    \label{lem:prime-factorisation-encoding-primitive-recursive}%
+    For a fixed \(i\), the function \(\functionmap{f_i}{n}{\pqty{n}_i}\) is primitive recursive.
+\end{lemma}
+
+\begin{proof}
+    We build this up in stages.
+
+    First, note for any finite sequence \(\pqty{m_0, \ldots, m_s} \in \NN^{s + 1}\), the function
+    \[
+        h\pqty{n} = \begin{cases}
+            m_n, & \qif n \leq s, \\
+            0, & \qif n > s,
+        \end{cases}
+    \]
+    is primitive by induction on \(s\) and by recursion (in \autoref{thm:partial-computable-closure-properties} (d) for \(k = 0\)). This \(k = 0\) case reads if \(\functiondomain{g}{\NN^2}{\NN}\) is primitive recursive, then so is the function
+    \[
+        h\pqty{0} = c \qand h\pqty{n + 1} = g\pqty{n, h\pqty{n}}.
+    \]
+
+    The induction step given \(\functiondomain{f}{\NN}{\NN}\) primitive recursive uses \(g\pqty{n, m} = f\pqty{n}\) is primitive recursive. Thus, \(h\pqty{0} = c\) and \(h\pqty{n + 1} = f\pqty{n}\) is primitive recursive.
+
+    This includes:
+    \begin{enumerate}
+        \item The \term{step function}
+        \[
+            \Step_k \pqty{n} = \begin{cases}
+                1, & \qif 0 \leq n \leq k - 2, \\
+                0, & \qif n > k - 2.
+            \end{cases}
+        \]
+
+        \item The \term{\(\delta\)-function}
+        \[
+            \delta_k \pqty{n} = \begin{cases}
+                1, & \qif n = k, \\
+                0, & \qif n \neq k.
+            \end{cases}
+        \]
+
+        \item The \term{\(\epsilon\)-function}
+        \[
+            \epsilon\pqty{n} = \delta_0\pqty{\delta_0\pqty{n}} = \begin{cases}
+                0, & \qif n = 0, \\
+                1, & \qif n > 0.
+            \end{cases}
+        \]
+
+        \item The \term{slope function}
+        \[
+            \Slope_k \pqty{n} = \begin{cases}
+                n + 1, &\qif 0 \leq n \leq k - 2, \\
+                0, &\qif n > k - 2.
+            \end{cases}
+        \]
+    \end{enumerate}
+
+    We can now show:
+    \begin{enumerate}[resume]
+        \item The \term{remainder function}
+        \[
+            \Rem_k \pqty{n} = n \mod k \quad \in \set{0, \ldots, k - 1}
+        \]
+        by recursion, since
+        \[
+            \Rem_k\pqty{n + 1} = \Slope_{k} \pqty{\Rem_k\pqty{n}}
+        \]
+
+        \item The \term{floor function}
+        \[
+            \Floor_k\pqty{n} = \floor{\frac{n}{k}}.
+        \]
+
+        \textbf{\textcolor{red}{See Example Sheet.}}
+
+        \item The \term{integer division function}
+        \[
+            \Divide_k\pqty{n} = \begin{cases}
+                \flatfrac{n}{k}, &\qif k \divides n, \\
+                0, & \qif k \notdivides n.
+            \end{cases}
+        \]
+
+        \textbf{\textcolor{red}{See Example Sheet.}}
+
+        \item The \term{division by power}
+        \[
+            \Power_k \pqty{n, m} = \begin{cases}
+                \flatfrac{n}{k^m}, &\qif k^m \divides n, \\
+                0, & \qif k^m \notdivides n.
+            \end{cases}
+        \]
+
+        Notice
+        \[
+            \Power_k \pqty{n, 0} = n \qand \Power_k \pqty{n, m + 1} = \Divide_k \pqty{\Power_k \pqty{n, m}}.
+        \]
+
+        \item The \term{maximum power}
+        \[
+            \Maxpow_k \pqty{n} = \begin{cases}
+                0, &\qif n = 0, \\
+                \max\set{m \in \NN}{k^m \divides n}, &\qif n > 0.
+            \end{cases}
+        \]
+
+        We define by recursion \(h\pqty{n, 0} = 0\), and \(h\pqty{n, m + 1} = h \pqty{n, m} + \epsilon\pqty{\Power_k \pqty{n, m + 1}}\). This is equal to
+        \[
+            P\pqty{h\pqty{n, m}, \epsilon \pqty{\Power_k \pqty{n, m + 1}}} = g\pqty{n, m, h\pqty{n, m}}
+        \]
+        where \(P\) is the addition function, and
+        \[
+            g\pqty{x, y, z} = z + \epsilon \pqty{\Power_k \pqty{x, y + 1}}.
+        \]
+
+        Now,
+        \[
+            \epsilon\pqty{\Power_k \pqty{n, j}} = \begin{cases}
+                1, & \qif k^j \divides n, \\
+                0, & \qif k^j \notdivides n.
+            \end{cases}
+        \]
+
+        In particular, it is zero if \(j \geq n\) (as \(k > 1\)). Thus
+        \[
+            h\pqty{n, n} = 0 + \epsilon\pqty{\Power_k \pqty{n, 1}} + \cdots + \epsilon\pqty{\Power_k \pqty{n, n}} = \Maxpow_k\pqty{n}.
+        \]
+    \end{enumerate}
+
+    Take \(k = p_i\) to obtain \(\pqty{n}_i = \Maxpow_{p_i}\pqty{n}\) is primitive recursive for fixed \(i\).
+\end{proof}
+
+We use this to encode \(k\)-tuples in \(\NN^k\) as a single natural number in \(\NN\), and in fact this allows us to encode functions as well. Say we have a function
+\[
+    \functiondomain{F}{\NN^{r + 1}}{\NN^{r + 1}}
+\]
+with components \(F = \pqty{f_0, \ldots, f_r}\) is primitive recursive. Given \(n \in \NN\), we may obtain a vector
+\[
+    \vb{n} = \pqty{\pqty{n}_0, \ldots, \pqty{n}_r} \in \NN^{r + 1},
+\]
+and we obtain \(F\), and we may obtain an encoded function
+\[
+    \function{\overline{F}}{\NN}{\NN}{n}{\prod_{i = 0}^{r} p_i^{f_i\pqty{\vb{n}}}},
+\]
+which is primitive recursive by \autoref{ex:primitive-recursive-addition-multiplication}, \autoref{ex:primitive-recursive-power}, and \autoref{lem:prime-factorisation-encoding-primitive-recursive}.
+
+\subsection{Partial Computable is Partial Recursive}
+
+\begin{theorem}[Partial Computable Functions are Partial Recursive]
+    \label{thm:partial-computable-partial-recursive}%
+    Every partial computable function \(\pfunctiondomain{f}{\NN^k}{\NN}\) is also partial recursive.
+\end{theorem}
+
+\begin{proof}
+    For a program \(P\) for \(f\), we will define an \term{auxiliary function} as
+    \[
+        \functiondomain{f}{\NN^{k + 2}}{\NN}
+    \]
+    as ``what is happening in \(P\)'', with extra inputs for the state and time. Define
+    \[
+        g\pqty{n_1, \ldots, n_k, 0, t}
+    \]
+    to be the state of \(P\) at time \(t\) with input \(\pqty{n_1, \ldots, n_k}\). In particular, if \(t = 0\), then \(g\pqty{n_1, \ldots, n_k, 0, 0} = 1\) regardless of the remaining input, and if we halt at \(t = t_0\), then \(g\pqty{n_1, \ldots, n_k, 0, t} = 0\) for all \(t \geq t_0\).
+
+    The function
+    \[
+        g\pqty{n_1, \ldots, n_k, i, t}
+    \]
+    is the contents of the register \(R_i\) at time \(t\). For \(M = \upper\pqty{P}\), we have \(g\pqty{n_1, \ldots, n_k, i, t} = 0\) for all \(i > M\). If \(P\) halts, then \(R_i\) remains unchanged thereafter.
+
+    \(g\) is a total function. Suppose \(g\) is recursive, then define
+    \[
+        q \pqty{n_1, \ldots, n_k} = \min \set{t \in \NN}{g\pqty{n_1, \ldots, n_k, 0, t} = 0}
+    \]
+    to be the number of steps taken to halt on this input, if it does. Then \(q\) is partial recursive by minimisation in \autoref{thm:partial-computable-closure-properties} (e), and
+    \[
+        f\pqty{n_1, \ldots, n_k} = g\pqty{n_1, \ldots, n_k, 1, q\pqty{n_1, \ldots, n_k}},
+    \]
+    so \(f\) will be partial recursive by composition in \autoref{thm:partial-computable-closure-properties} (c).
+
+    So all what remains to show is that \(g\) is partial recursive, but in particular, we prove it is \emph{primitive recursive}. We will obtain \(g\) from the transition function \(\sigma\), which computes the changes for each instruction, but we use the encoded \(\overline{\sigma}\). We define \(\sigma\) by
+    \[
+        \sigma\pqty{i, n_1, \ldots, n_M} = \pqty{\text{new state}, \text{new contents of registers}}
+    \]
+    where \(i\) is the state of the machine, and \(n_1, \ldots, n_M\) be the registers, and if \(i\) is not a valid state, then \(\sigma\pqty{i, n_1, \ldots, n_M} = \pqty{i, n_1, \ldots, n_M}\) (no change).
+
+    For example, if the instruction is \(\sPlus{S_i}{j}{k}\), then
+    \[
+        \sigma\pqty{i, n_1, \ldots, n_j, \ldots, n_M} = \pqty{k, n_1, \ldots, n_j + 1, \ldots, n_M}.
+    \]
+
+    Each component function is of \(\sigma\) is primitive recursive, for example, the \(n_1\) component always maps to \(n_1 \pm 1\) and it only happens for finitely many values of \(i\) regardless of the content in the register, and remains unchanged otherwise.
+
+    So \(\functiondomain{\overline{\sigma}}{\NN}{\NN}\) is primitive recursive. We now recover \(g\) through another function \(\functiondomain{h}{\NN^{k + 2}}{\NN}\) which is like \(g\) but starting at any state, though, with the \(i\) variable encoded. Thus
+    \[
+        h\pqty{n_0, n_1, \ldots, n_k, t}
+    \]
+    is \emph{coded} integer of the state and registers of \(R_1, \ldots, R_M\) at time \(t\) for the input \(n_1, \ldots, n_k\) and the start state \(n_0\). Formally, define
+    \[
+        h\pqty{n_0, n_1, \ldots, n_k, 0} = 2^{n_0} 3^{n_1} \cdots p_k^{n_k} p_{k + 1}^0 \cdots p_M^0,
+    \]
+    and thereafter, we define using \(\overline{\sigma}\) as
+    \[
+        h\pqty{n_0, n_1, \ldots, n_k, t + 1} = \overline{\sigma}\pqty{h\pqty{n_0, n_1, \ldots, n_k, t}}.
+    \]
+
+    Then \(h\) is primitive recursive by recursing in \autoref{thm:partial-computable-closure-properties} (d), \autoref{lem:prime-factorisation-encoding-primitive-recursive} and \(\overline{\sigma}\) is primitive recursive.
+
+    Finally, let
+    \[
+        g \pqty{n_1, \ldots, n_k, i, t} = \pqty{h \pqty{1, n_1, \ldots, n_k, t}}_i
+    \]
+    for \(0 \leq i \leq M\), and the right-hand side is primitive recursive, and \(0\) if \(i > M\). Thus
+    \[
+        g \pqty{n_1, \ldots, n_k, i, t} = \sum_{j = 0}^{M} \delta_j\pqty{i} \pqty{h \pqty{1, n_1, \ldots, n_k, t}}_j
+    \]
+    is primitive recursive by \autoref{thm:partial-computable-closure-properties}.
+\end{proof}
+
+\subsection{Algorithms and Recursive Sets}
+
+\begin{definition}[Recursive Functions and Sets]
+    A partial function \(\pfunctiondomain{f}{\NN^k}{\NN}\) is \term{computable} if it is total recursive. A set \(X \subseteq \NN^k\) (often \(X \subseteq \NN\)) is \term{recursive}, \term{computable} or \term{decidable} if the characteristic function \(\characteristic_{X}\) is computable.
+\end{definition}
+
+\begin{definition}[Algorithm]
+    An \term{algorithm} is any process taking input \(\NN^l\) for some \(k\), or a recursive subset \(X \subseteq \NN^k\), and giving output in \(\NN\) which is simulated by a register machine.
+
+    A \term{total algorithm} terminates for all elements in\(X\). A \term{partial algorithm} may not terminate for some elements in \(X\).
+\end{definition}
+
+\begin{lemma}
+    For each \(k \geq 1\), there exists a total function \(\functiondomain{f}{\NN^k}{\NN}\) that is not computable.
+\end{lemma}
+
+\begin{proof}[Existence of Non-Computable Functions]
+    Each partial computable function comes from a finite program with \(\pqty{n + 1}\) states for some \(n \geq 1\). So taking union over \(n \in \NN\), there exists countably many partial computable functions, but there exists uncountably many total functions \(\functiondomain{f}{\NN^k}{\NN}\).
+\end{proof}
+
+We give a way of ordering \(\NN \times \cdots \times \NN\).
+
+\begin{definition}[Short Lexicographic Ordering]
+    For a fixed \(m\), the \term{shortlex} (or \term{short lexicographic}) \term{ordering} on \(\NN^m\) is defined as follows, is that
+    \[
+        \pqty{n_1, \ldots, n_m} < \pqty{n_1', \ldots, n_m'}
+    \]
+    if \(\sum_{n_i} < \sum_{n_i}'\), or \(\sum_{n_i} = \sum_{n_i}'\) and there exists \(j\) such that \(n_{j + 1} < n_{j + 1}'\) and \(n_i = n_i'\) for all \(i \leq j\).
+\end{definition}
+
+This gives us an indexed list of \(\NN^m\) which is a explicit bijection with \(\NN\), by taking \(\pqty{n_1, \ldots, n_m}\) with \(\sum_{n_i} = 0, 1, 2, \ldots\) then for each \(\sum_{n_i} = k\), we take the shortlex ordering of \(\pqty{n_1, \ldots, n_m}\) with \(\sum_{n_i} = k\) on the finite number of tuples.
+
+Note that for any subset \(S \subseteq \NN\), we can order
+\[
+    \bigcup_{m \in \NN} S^m
+\]
+by ordering shortlex on \(m = 1\), then \(2\), and so on.
+
+We can also encode register machines as integers (here injective but not surjective).
+
+\begin{definition}[Encoding Register Machines]
+    \label{def:encoding-register-machines}%
+    IF a register machine program \(P\) has \(n\) instructions, then for the \(i\)-th instruction, let \(t_i = 2^j 5^k\) if the instruction is \(\sPlus{S_i}{j}{k}\), then \(t_i = 2^j 3 5^k 7^l\), and if the instruction is \(\sMinus{S_i}{j}{k}{l}\).
+
+    Now encode \(\pqty{t_1, \ldots, t_n}\) as \(m = 2^n 3^{t_1} 5^{t_2} \cdots p_n^{t_n}\).
+    
+    Let \(P_m\) be the program encoded by \(m\). For these numbers \(m \in \NN\), we say \(m\) \term{codes a program} and \(P_m\) is the \term{\(m\)-th machine}.
+\end{definition}
+
+The input of a register machine is a \(k\)-tuple, for varying \(k\).
+
+\begin{definition}[Partial Function Computed by a Register Machine]
+    We write \(\pfunctiondomain{f_{n, k}}{\NN^k}{\NN}\) for the \(k\)-variable partial function computed by the \(n\)-th machine \(P_n\) if it exists. If \(n\) does not code a program, we say \(f_{n, k}\) is undefined (i.e. \(\dom f_{n, k} = \emptyset\)).
+\end{definition}
+
+Here is a total function which is not recursive, given explicitly (but not an \emph{algorithmic} description).
+
+\begin{lemma}[Explicit Uncomputable Function]
+    \label{lem:explicit-uncomputable-function}%
+    Let \(\functiondomain{g}{\NN}{\NN}\) be
+    \[
+        g\pqty{n} = \begin{cases}
+            f_{n, 1} \pqty{n} + 1, & \qif f_{n, 1} \pqty{n} \text{ is defined}, \\
+            0, & \qif f_{n, 1} \pqty{n} \text{ is undefined}.
+        \end{cases}
+    \]
+
+    This is zero if the \(n\)-th machine does not halt on input \(n\), or if the \(n\)-th machine does not exist.
+
+    Then \(g\) is not computable.
+\end{lemma}
+
+\begin{proof}
+    If yes, \(g\) is computed by a machine, then there is some \(N\) such that \(g = f_{N, 1}\). Since \(g\) is total, \(f_{N, 1}\) is total, but note
+    \[
+        f_{N, 1} \pqty{N} = g\pqty{N} = f_{N, 1} \pqty{N} + 1,
+    \]
+    which is a contradiction.
+\end{proof}
+
+\subsection{Church's Thesis}
+
+This is introduced by Church (1936), Turing (1936--1937), and Kleene (1943).
+
+Our idea of an ``executable process'' is a step-by-step deterministic process with a finite description at every step, finite set of rules, and finite input/output.
+
+An ``abstract theory of finite computation'' \(\mathcal{C}\) is a theory of computation consisting of ``executable process''.
+
+\begin{enumerate}
+    \item \term{Church's Thesis} states that for any \(\mathcal{C}\), the \(\mathcal{C}\)-partial computable functions \(\pfunctiondomain{f}{\NN^k}{\NN}\) are at most the partial recursive functions (in our sense we previously defined).
+\end{enumerate}
+
+However, we do have proofs of equivalence for register machine (Minsky, 1950s, by \autoref{thm:partial-computable-partial-recursive}), Church's \(\lambda\)-calculus (1936), and Turing machines (1936--1937). These are also equivalent to most standard (idealised) programming languages, for example, Fortran, Pascal and Basic (1960s). We have not yet proved whether this is equivalent to quantum computers or DNA computers, but we do not yet have a widely-agreed formal definition of these.
+
+Next, we do not want to give explicit registers for everything we do. (Recent AI research might have been attempting this.)
+
+\begin{enumerate}[resume]
+    \item Any informal description of an executable process, starting with input in the \(\NN^k\) and output in \(\NN\) (or not halting) is equivalent to a register machine, so we do not need to write down every explicit detail. A description suffices for existence of a process, and indeed, for the construction of the register machine: for example, we could encode the finite length English text of the process using integers for letters, then map to \(\NN\).
+    \item There exists a total algorithm (total recursion function \(\functiondomain{h}{\NN}{\NN}\)) that given a code \(n\) for the text of an executable process, returns a code \(h\pqty{n}\) for register machine \(P_{h\pqty{n}}\) that carries out that process. This means, ``input English, output instructions'', or ``if I can describe it, I can build it''.
+\end{enumerate}
+
+From now on, we assume (maybe without comment) the above three points.
+
+\begin{lemma}[Computable Partial Function from Uncomputable Total Function]
+    \label{lem:computable-partial-function-from-uncomputable-total-function}%
+    Let \(\pfunctiondomain{h}{\NN}{\NN}\) to be defined as
+    \[
+        h\pqty{n} = \begin{cases}
+            f_{n, 1} \pqty{n} + 1, & \qif f_{n, 1} \pqty{n} \text{ is defined}, \\
+            \text{undefined}, & \qif f_{n, 1} \pqty{n} \text{ is undefined}.
+        \end{cases}
+    \]
+
+    Then, \(h\) is partial recursive.
+\end{lemma}
+
+\begin{proof}
+    For input \(n\), we check from \autoref{def:encoding-register-machines} whether \(n\) encodes a program, which goes into a loop if not. If so, run this program with input \(n\). If it terminates, add \(1\) to \(R\) for output.
+
+    This describes the process for \(h\), so by Church's thesis, \(h\) is partial recursive.
+\end{proof}
+
+\begin{remark}
+    The description must be step-by-step, not existential. In \autoref{lem:explicit-uncomputable-function}, it was an explicit description of the total function \(g\), but if \(f_{n, 1}\pqty{n} \nothalt\), then how would we know? We would need to wait forever, hence not a step-by-step description.
+\end{remark}
