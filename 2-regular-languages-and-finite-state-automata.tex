@@ -1074,3 +1074,7 @@ We consider the table \(Q \times Q\), with the \(\pqty{p, q}\)th entry either bl
 Finally, if given two DFAs \(D_1\) and \(D_2\) over \(\Sigma\), we can test whether or not they accept the same languages. We remove inaccessible states to get \(E_1\) and \(E_2\), and then their minimal DFAs are \(\flatfrac{E_1}{\sim}\) and \(\flatfrac{E_2}{\sim}\), having the same languages as \(D_1\) and \(D_2\), respectively.
 
 But by \autoref{thm:minimal-dfa-is-unique}, if \(\langacc\pqty{\flatfrac{E_1}{\sim}} = \langacc\pqty{\flatfrac{E_2}{\sim}}\), then they have the same number of states, and \(\flatfrac{E_1}{\sim} \equiv \flatfrac{E_2}{\sim}\). So we test for this, and if yes we do have the same language, and if not, then they accept different languages.
+
+\begin{remark}
+    In an examination, when asked to prove some DFA is minimal, it is safer to show both minimality (equivalence classes being trivial) and the fact that it has no inaccessible states, rather than just the first one.
+\end{remark}
