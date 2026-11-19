@@ -417,13 +417,13 @@ We need to ``encode'' finite sequences of arbitrary length in \(\NN\).
                 0, &\qif n > k - 2.
             \end{cases}
         \]
-    \end{enumerate}
+    \end{enumerate}quan
 
     We can now show:
     \begin{enumerate}[resume]
         \item The \term{remainder function}
         \[
-            \Rem_k \pqty{n} = n \mod k \quad \in \set{0, \ldots, k - 1}
+            \Rem_k \pqty{n} = n \bmod k \quad \in \set{0, \ldots, k - 1}
         \]
         by recursion, since
         \[
@@ -706,3 +706,123 @@ From now on, we assume (maybe without comment) the above three points.
 \begin{remark}
     The description must be step-by-step, not existential. In \autoref{lem:explicit-uncomputable-function}, it was an explicit description of the total function \(g\), but if \(f_{n, 1}\pqty{n} \nothalt\), then how would we know? We would need to wait forever, hence not a step-by-step description.
 \end{remark}
+
+\subsection{Recursively Enumerable Sets}
+
+Given a partial recursive function \(\pfunctiondomain{f}{\NN^k}{\NN}\) with domain \(X \subseteq \NN^k\). Say \(k = 1\), and suppose we input the number \(7\). If \(f\pqty{7}\halt\) (i.e., if \(7 \in X\)), then we  get an answer after a finite time. If \(f\pqty{7}\nothalt\), then we need to wait forever.
+
+Now we ask: does \(f\) halt on either \(7\) or \(9\)? If \(f\pqty{7}\nothalt\) but \(f\pqty{9}\halt\), then our answer is yes, but we input \(7\) and need to wait forever. (If we input \(9\) first then we could possibly have \(f\pqty{9}\nothalt\) instead.)
+
+What we do is \term{zig-zag}: we do one step of each alternatively. Let \(P_n^t\pqty{x}\) is the machine \(P_n\) with input \(x\) at time step \(t\). If \(f\) above is \(f_{n, 1}\) (so computed by \(P_n\)), we could execute:
+\[
+    \begin{tikzcd}[column sep=large, row sep=large]
+    {} \arrow[r] & P_n^1\pqty{7} \arrow[r] & P_n^1\pqty{9} \arrow[dl] \\
+     & P_n^2\pqty{7} \arrow[r] & P_n^2\pqty{9} \arrow[dl] \\
+     & {\vdots}
+    \end{tikzcd}
+\]
+
+Now, we use zig zag (effectively shortlex) to ask: does \(f\) halt on any input (or is \(X\) empty)?
+
+We can execute this zig-zag process similar to the proof of countability of \(\NN^2\). We do
+\[
+    \begin{tikzcd}[column sep=large, row sep=large]
+    {} \arrow[r]
+        & P_n^1(0) \arrow[r]
+        & P_n^1(1) \arrow[dl]
+        & P_n^1(2) \arrow[dl]
+        & P_n^1(3) \arrow[dl] \\
+    & P_n^2(0) \arrow[urr]
+        & P_n^2(1) \arrow[dl]
+        & P_n^2(2) \arrow[dl] \\
+    & P_n^3(0) \arrow[uurrr]
+        & {}
+    \end{tikzcd}
+\]
+
+If \(X = \emptyset\), then we run forever, but otherwise it will return \(f\pqty{x}\) for some \(x\) (but not necessarily the \emph{least} \(x \in X\)).
+
+We could possibly even alternate between registers machines (vary \(n\) too). This is an algorithmic process described step by step, so we can construct register machine for the above computation.
+
+\begin{definition}[Recursively Enumerable Sets]
+    A set \(E \subseteq \NN\) (or \(\subseteq \NN^k\)) is \term{recursively enumerable} (r.e.) if the partial function
+    \[
+        \varphi_E \pqty{n} = \begin{cases}
+            1, & \qif n \in E, \\
+            \text{undefined}, & \qif n \notin E
+        \end{cases}
+    \]
+    is partial recursive.
+\end{definition}
+
+\begin{theorem}[Characterisation of Recursively Enumerable Sets]
+    \label{thm:characterisation-recursively-enumerable-sets}%
+    The following are equivalent for a set \(E \subseteq \NN\):
+    \begin{enumerate}[label=(\alph*)]
+        \item \(E\) is the image of some partial recursive function on some number of variables, i.e., there is some \(k\) and \(n\) such that \(E = \set{f_{n, k} \pqty{m_1, \ldots, m_k}}{m_1, \ldots, m_k \in \NN}\). (We can actually take \(k = 1\).)
+        \item \(E\) is the domain of the definition of some partial recursive function on \(1\) variable.
+        \item \(E\) is recursively enumerable.
+        \item The function
+        \[
+            \psi_E \pqty{n} = \begin{cases}
+                n, & \qif n \in E, \\
+                \text{undefined}, & \qif n \notin E
+            \end{cases}
+        \]
+        is partial recursive. (We can enumerate elements of \(E\) in a recursive fashion.)
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+    \textbf{(b) \(\implies\) (c).} Given \(P_n\) for computing \(f_n\), we modify it at the end so it empties register \(1\), then add \(1\).
+    
+    \textbf{(c) \(\implies\) (d).} Similarly, we start by copying the input \(R_1\) to some other register (sufficiently large), and at the end we empty \(R_1\) and copy back the value of the input.
+
+    \textbf{(d) \(\implies\) (a).} This is trivial, since \(\psi_E\) is a partial recursive function with image \(E\).
+
+    \textbf{(a) \(\implies\) (b).} Given a program \(P_n\) for computing \(\pfunctiondomain{f_{n, k}}{\NN^k}{\NN}\) with image \(E\), we do the following process \(Q\): given input \(x \in \NN\) for \(Q\), run the zig-zag procedure (having ordered \(\NN^k\)) to compute \(f_{n, k} \pqty{\cdot}\) for each input in \(\NN^k\). Each time \(f_{n, k} \pqty{m_1, \ldots, m_k}\) halts, we run a total subroutine comparing it to \(x\), and halt if equal. If not, we go back into the zig-zag procedure.
+
+    Thus \(Q\) halts exactly if \(x\) is in the image of \(f_{n, k}\), but runs forever if not. Thus \(Q\) computes a partial recursive function with domain \(E\).
+\end{proof}
+
+\subsection{Properties of Recursively Enumerable Sets}
+
+In \autoref{thm:characterisation-recursively-enumerable-sets}, we know recursively enumerable sets are precisely those which is the image of some partial recursive function. Can we make it a total recursive function? Well, this is clearly impossible if \(E = \emptyset\). But otherwise, it is completely possible!
+
+\begin{theorem}[Non-Empty Recursively Enumerable Sets are Images of Total Recursive Functions]
+    If \(E \neq \empty\), then \(E\) is recursively enumerable if and only if \(E\) is the image of some total recursive function \(\functiondomain{f}{\NN}{\NN}\).
+\end{theorem}
+
+\begin{proof}
+    \(\impliedby\). By \autoref{thm:characterisation-recursively-enumerable-sets} (a), \(E\) is recursively enumerable.
+
+    \(\implies\). Let \(E = \set{e_0, \ldots, e_{k - 1}}\), and let the function
+    \[
+        f\pqty{n} = \begin{cases}
+            e_n, & \qif n < k, \\
+            e_{k - 1}, & \qif n \geq k.
+        \end{cases}
+    \]
+
+    This is recursive by \autoref{lem:prime-factorisation-encoding-primitive-recursive} and has image \(E\).
+
+    For an infinite subset \(E\), the domain of a partial recursive function \(\pfunctiondomain{g}{\NN}{\NN}\), we can zig-zag to perform steps of computing \(g\pqty{0}, g\pqty{1}, \ldots\). Define \(\functiondomain{f}{\NN}{\NN}\) as \(f\pqty{0}\) being the first \(i\) for which the computation of \(g\pqty{i}\) halts in this process, \(f\pqty{1}\) as the second, and so on.
+
+    Then the image of \(f\) is \(E\) and \(f\) is recursive.
+\end{proof}
+
+By \autoref{thm:characterisation-recursively-enumerable-sets} (b), each program \(P_n\) corresponds to a recursive enumerable set, the domain of \(f_{n, 1}\). So we define
+\[
+    W_n = \set{x \in \NN}{f_{n, 1}\pqty{x} \halt}
+\]
+if \(n\) codes a program, and \(W_n = \emptyset\) otherwise. We say \(W_n\) is the \term{\(n\)-th recursively enumerable set} (although it is not unique).
+
+\begin{theorem}
+    For any \(E \subseteq \NN\), \(E\) is recursive if and only if both \(E\) and \(\NN \setminus E\) are recursively enumerable.
+\end{theorem}
+
+\begin{proof}
+    \(\implies\). As \(\characteristic_E\) is total recursive, \(\varphi_E\) is partial recursive, as when \(\characteristic_E\pqty{n} = 1\), set \(\varphi_E\) to output \(1\), and if \(\characteristic_E\pqty{n} = 0\), then \(\varphi_E\) does not halt. Similarly, \(\varphi_{\NN \setminus E}\) is partial recursive, just by switching the output of \(\characteristic_E\).
+
+    \(\impliedby\). Let \(E\) and \(\NN \setminus E\) be recursively enumerable, then \(\varphi_E\) and \(\varphi_{\NN \setminus E}\) are partial recursive. We can perform zig-zag operation for computing \(\varphi_E\) and \(\varphi_{\NN \setminus E}\) together on input \(n\). Exactly one will halt, where upon output \(1\) if it is \(\varphi_E\) and output \(0\) if it is \(\varphi_{\NN \setminus E}\). So \(\characteristic_E\) is recursive.
+\end{proof}
